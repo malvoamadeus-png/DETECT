@@ -28,7 +28,21 @@ def test_check_env_accepts_database_url_fallback(monkeypatch, capsys) -> None:
     assert exit_code == 0
     assert payload["env"]["SUPABASE_DB_URL"] == "missing"
     assert payload["env"]["DATABASE_URL"] == "set"
+    assert payload["env"]["DETECT_MAX_X_PAGES"] == "missing"
     assert '"x"' not in output
+
+
+def test_check_env_reports_x_pagination_setting(monkeypatch, capsys) -> None:
+    _clear_env(monkeypatch)
+    monkeypatch.setenv("OPENAI_API_KEY", "x")
+    monkeypatch.setenv("SUPABASE_DB_URL", "postgres://user.projref@host.example/db")
+    monkeypatch.setenv("DETECT_MAX_X_PAGES", "8")
+
+    exit_code = backend_main.check_env()
+    payload = json.loads(capsys.readouterr().out)
+
+    assert exit_code == 0
+    assert payload["env"]["DETECT_MAX_X_PAGES"] == "set"
 
 
 def test_check_env_fails_without_any_database_url(monkeypatch) -> None:
