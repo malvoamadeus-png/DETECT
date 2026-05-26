@@ -5,6 +5,7 @@
 - Frontend: GitHub + Vercel, read-only Supabase dashboard.
 - Backend worker: long-lived Linux process, polls Bankr every 20 seconds.
 - Database: Supabase Postgres, migrated from local using `SUPABASE_DB_URL`.
+- No auth, admin panel, or browser-side writes in the first version.
 
 Run a local readiness check before deployment:
 
@@ -245,4 +246,4 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 Use the fallback only when the public Supabase REST API points to the same project as the backend database.
 
-Important: the Vercel `NEXT_PUBLIC_SUPABASE_*` variables must belong to the same Supabase project as the worker's `SUPABASE_DB_URL`. If they point to different projects, the backend can write data successfully while the frontend still reports that `detect_dashboard` cannot be found in the schema cache.
+Important: the Vercel `NEXT_PUBLIC_SUPABASE_*` variables must belong to the same Supabase project as the worker's `SUPABASE_DB_URL` if the public Supabase fallback is enabled. If they point to different projects, the backend can write data successfully while the frontend still reports that `detect_dashboard` cannot be found in the schema cache. The preferred first-version path is `/api/dashboard` backed by `SUPABASE_DB_URL`, which avoids relying on browser-side Supabase reads.
