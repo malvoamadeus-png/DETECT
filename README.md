@@ -69,6 +69,7 @@ cd /opt/DETECT
 bash scripts/linux/bootstrap-server.sh
 bash scripts/linux/install-worker.sh
 sudo systemctl restart detect-worker.service
+bash scripts/linux/preflight-worker.sh
 bash scripts/linux/healthcheck-worker.sh
 bash scripts/linux/logs-worker.sh
 ```

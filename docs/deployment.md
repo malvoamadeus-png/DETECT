@@ -122,6 +122,7 @@ Scripted health check:
 
 ```bash
 cd /opt/DETECT
+bash scripts/linux/preflight-worker.sh
 bash scripts/linux/healthcheck-worker.sh
 ```
 

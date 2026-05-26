@@ -21,7 +21,7 @@ try {
   }
 
   Write-Host "== Bash syntax =="
-  bash -n scripts/linux/bootstrap-server.sh scripts/linux/install-worker.sh scripts/linux/healthcheck-worker.sh scripts/linux/restart-worker.sh scripts/linux/logs-worker.sh
+  bash -n scripts/linux/bootstrap-server.sh scripts/linux/install-worker.sh scripts/linux/healthcheck-worker.sh scripts/linux/restart-worker.sh scripts/linux/logs-worker.sh scripts/linux/preflight-worker.sh
   if ($LASTEXITCODE -ne 0) {
     throw "bash syntax check failed"
   }

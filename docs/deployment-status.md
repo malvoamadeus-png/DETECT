@@ -16,6 +16,7 @@ Last audited: 2026-05-26 Asia/Shanghai
 - Vercel env template and preflight checker exist for `SUPABASE_DB_URL` without printing secrets.
 - Local smoke test against the dashboard API has returned real data.
 - Linux worker install, restart, health, log, and bootstrap scripts exist.
+- Linux worker server-side preflight script exists for read-only diagnostics before/after install.
 - Windows helper scripts exist for Linux worker deploy, Vercel deploy, readiness checks, smoke tests, and local preflight.
 - Final deployment orchestrator exists for local preflight, readiness, worker deploy, and frontend smoke testing once external targets are known.
 - Linux worker deploy dry-run is covered by local verification and is wired into GitHub Actions, including first-server bootstrap before clone.
