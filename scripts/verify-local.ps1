@@ -71,6 +71,9 @@ try {
     }
   } finally {
     Pop-Location
+    if (Test-Path -LiteralPath $checkoutProbe) {
+      Remove-Item -LiteralPath $checkoutProbe -Recurse -Force
+    }
   }
   Write-Host "ci_checkout_probe=ok"
 
