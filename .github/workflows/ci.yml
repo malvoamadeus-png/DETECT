@@ -66,9 +66,9 @@ jobs:
       - run: python -m compileall backend
       - run: python -m pytest backend/tests
       - shell: pwsh
-        run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/check-migrations.ps1
+        run: ./scripts/check-migrations.ps1
       - shell: pwsh
-        run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/check-secrets.ps1
+        run: ./scripts/check-secrets.ps1
       - run: bash -n scripts/linux/bootstrap-server.sh scripts/linux/install-worker.sh scripts/linux/healthcheck-worker.sh scripts/linux/restart-worker.sh scripts/linux/logs-worker.sh scripts/linux/preflight-worker.sh
 
   scripts:
