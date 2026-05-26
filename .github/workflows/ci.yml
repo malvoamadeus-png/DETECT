@@ -17,9 +17,10 @@ jobs:
       - name: Checkout source
         shell: bash
         run: |
+          ref_name="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
           git init .
           git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
-          git fetch --depth 1 origin "${GITHUB_REF}"
+          git fetch --depth 1 origin "${ref_name}"
           git checkout --force --detach FETCH_HEAD
       - uses: actions/setup-node@v4
         with:
@@ -54,9 +55,10 @@ jobs:
       - name: Checkout source
         shell: bash
         run: |
+          ref_name="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
           git init .
           git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
-          git fetch --depth 1 origin "${GITHUB_REF}"
+          git fetch --depth 1 origin "${ref_name}"
           git checkout --force --detach FETCH_HEAD
       - uses: actions/setup-python@v5
         with:
@@ -77,9 +79,10 @@ jobs:
       - name: Checkout source
         shell: bash
         run: |
+          ref_name="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
           git init .
           git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
-          git fetch --depth 1 origin "${GITHUB_REF}"
+          git fetch --depth 1 origin "${ref_name}"
           git checkout --force --detach FETCH_HEAD
       - name: Parse PowerShell scripts
         shell: pwsh

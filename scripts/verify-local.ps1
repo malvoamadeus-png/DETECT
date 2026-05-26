@@ -36,6 +36,7 @@ try {
   $requiredWorkflowFragments = @(
     "git fetch --depth 1 origin",
     "git checkout --force --detach FETCH_HEAD",
+    "GITHUB_HEAD_REF:-${GITHUB_REF_NAME}",
     "Frontend API error checks",
     "Frontend server DB checks"
   )
