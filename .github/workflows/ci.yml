@@ -96,6 +96,7 @@ jobs:
             "scripts/run-once.ps1",
             "scripts/run-worker.ps1",
             "scripts/smoke-vercel.ps1",
+            "scripts/sync-vercel-env.ps1",
             "scripts/trigger-ci.ps1",
             "scripts/verify-local.ps1"
           )
@@ -137,6 +138,9 @@ jobs:
       - name: Validate Vercel env template
         shell: pwsh
         run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/check-vercel-env.ps1 -EnvPath frontend/.env.production.example -AllowPlaceholders
+      - name: Validate Vercel env sync dry-run
+        shell: pwsh
+        run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/sync-vercel-env.ps1 -EnvPath .env.example -DryRun -AllowPlaceholders
       - name: Validate worker env template
         shell: pwsh
         run: |

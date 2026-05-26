@@ -181,6 +181,12 @@ Once the worker host and public Vercel URL are both known, run the final orchest
 
 This runs local preflight, readiness checks, optional Vercel env validation, Linux worker deploy, and frontend smoke testing. Use `-DryRun` to preview the worker deployment portion.
 
+If Vercel CLI is installed, authenticated, and linked to the project, the orchestrator can also sync production env and deploy the frontend:
+
+```powershell
+.\scripts\deploy-full.ps1 -SshHost user@host -SyncVercelEnv -DeployVercel
+```
+
 If `SUPABASE_DB_URL` was configured directly in the Vercel dashboard and no local `frontend/.env.production.local` exists, add `-SkipVercelEnvCheck`.
 
 ## Vercel
@@ -205,6 +211,18 @@ Local template/check:
 ```powershell
 copy frontend\.env.production.example frontend\.env.production.local
 .\scripts\check-vercel-env.ps1
+```
+
+If Vercel CLI is installed, authenticated, and linked to the `frontend` project, sync the production database env from the local `.env` without printing secrets:
+
+```powershell
+.\scripts\sync-vercel-env.ps1 -EnvPath .env
+```
+
+Preview which keys would be synced:
+
+```powershell
+.\scripts\sync-vercel-env.ps1 -EnvPath .env -DryRun
 ```
 
 The frontend reads `/api/dashboard`, and that server route queries `detect_dashboard` through `SUPABASE_DB_URL`. This keeps the browser read-only and avoids exposing DB credentials. The server-side Postgres client uses SSL plus explicit connection/query/statement timeouts so Vercel functions fail fast instead of hanging on database connectivity issues. Public API responses use generic error messages while logging internal error details server-side for Vercel log inspection.

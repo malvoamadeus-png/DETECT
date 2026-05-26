@@ -3,8 +3,11 @@ param(
   [string]$AppDir = "/opt/DETECT",
   [string]$VercelBaseUrl = "",
   [string]$VercelEnvPath = "frontend/.env.production.local",
+  [string]$VercelEnvSourcePath = ".env",
   [string]$WorkerEnvPath = ".env",
   [switch]$UploadWorkerEnv,
+  [switch]$SyncVercelEnv,
+  [switch]$DeployVercel,
   [switch]$SkipLocalPreflight,
   [switch]$SkipReadiness,
   [switch]$SkipGitHubActionsCheck,
@@ -71,6 +74,36 @@ try {
     Write-Host "vercel_env_file=skipped assuming Vercel Dashboard env is configured"
   }
 
+  if ($SyncVercelEnv) {
+    Invoke-Step "Vercel env sync" {
+      powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root "scripts/sync-vercel-env.ps1") -EnvPath $VercelEnvSourcePath
+      if ($LASTEXITCODE -ne 0) {
+        throw "Vercel env sync failed."
+      }
+    }
+  }
+
+  if ($DeployVercel) {
+    Invoke-Step "Vercel deploy" {
+      $args = @(
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        (Join-Path $root "scripts/deploy-vercel.ps1")
+      )
+      if ($SkipVercelSmoke) {
+        $args += "-SkipSmoke"
+      } elseif ($VercelBaseUrl) {
+        $args += @("-SmokeBaseUrl", $VercelBaseUrl)
+      }
+      powershell.exe @args
+      if ($LASTEXITCODE -ne 0) {
+        throw "Vercel deploy failed."
+      }
+    }
+  }
+
   if ($SshHost -and -not $SkipWorkerDeploy) {
     Invoke-Step "Linux worker deploy" {
       $args = @(
@@ -99,7 +132,7 @@ try {
     Write-Host "worker_deploy=skipped pass -SshHost user@host to deploy worker"
   }
 
-  if ($VercelBaseUrl -and -not $SkipVercelSmoke) {
+  if ($VercelBaseUrl -and -not $SkipVercelSmoke -and -not $DeployVercel) {
     Invoke-Step "Vercel smoke test" {
       powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root "scripts/smoke-vercel.ps1") -BaseUrl $VercelBaseUrl
       if ($LASTEXITCODE -ne 0) {

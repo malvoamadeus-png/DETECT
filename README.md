@@ -88,6 +88,12 @@ Or run the final deployment orchestrator once both the worker host and public fr
 .\scripts\deploy-full.ps1 -SshHost user@host -VercelBaseUrl https://your-vercel-domain
 ```
 
+If Vercel CLI is installed, authenticated, and linked, the same orchestrator can also sync Vercel env and deploy the frontend:
+
+```powershell
+.\scripts\deploy-full.ps1 -SshHost user@host -SyncVercelEnv -DeployVercel
+```
+
 If `SUPABASE_DB_URL` is configured directly in the Vercel dashboard instead of `frontend/.env.production.local`, add `-SkipVercelEnvCheck`.
 
 Preview the generated remote deployment script without connecting:
@@ -106,6 +112,12 @@ If Vercel CLI is installed and linked:
 
 ```powershell
 .\scripts\deploy-vercel.ps1
+```
+
+If Vercel CLI is installed and linked, sync the required production database env from local `.env` without printing secrets:
+
+```powershell
+.\scripts\sync-vercel-env.ps1 -EnvPath .env
 ```
 
 Check deployment readiness:

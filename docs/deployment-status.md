@@ -22,8 +22,9 @@ Last audited: 2026-05-26 Asia/Shanghai
 - Linux worker install, restart, health, log, and bootstrap scripts exist.
 - Linux worker server-side preflight script exists for read-only diagnostics before/after install, accepts either `SUPABASE_DB_URL` or `DATABASE_URL`, and handles UTF-8 BOM env files.
 - Windows helper scripts exist for Linux worker deploy, Vercel deploy, readiness checks, smoke tests, and local preflight.
+- Vercel env sync helper exists to upsert `SUPABASE_DB_URL` from local `.env` through the Vercel CLI without printing secret values.
 - Readiness checks support strict production gating with explicit skips for known external constraints.
-- Final deployment orchestrator exists for local preflight, readiness, worker deploy, and frontend smoke testing once external targets are known.
+- Final deployment orchestrator exists for local preflight, readiness, optional Vercel env sync, optional Vercel deploy, worker deploy, and frontend smoke testing once external targets are known.
 - Linux worker deploy dry-run and upload-env dry-run are covered by local verification and wired into GitHub Actions, including first-server bootstrap before clone and safe temp-file env upload before installing `/opt/DETECT/.env`.
 - Backend unit tests cover Bankr launch parsing, X identity resolution priority/fallbacks, GitHub URL discovery/scoring/API aggregation, X cursor pagination, tweet dedupe, author filtering, 50-post defaults, configured target persistence, OpenAI analysis fallback behavior, and redacted environment diagnostics including X pagination env reporting.
 - Frontend API limit checks cover `/api/dashboard?limit=` bounds for invalid, negative, decimal, default, and oversized values.

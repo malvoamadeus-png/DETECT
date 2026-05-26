@@ -177,6 +177,10 @@ DATABASE_URL=postgres://user.projref@host.example/db
   if ($LASTEXITCODE -ne 0) {
     throw "Vercel env template check failed"
   }
+  powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root "scripts/sync-vercel-env.ps1") -EnvPath ".env.example" -DryRun -AllowPlaceholders
+  if ($LASTEXITCODE -ne 0) {
+    throw "Vercel env sync dry-run failed"
+  }
   if (-not (Test-Path -LiteralPath (Join-Path $root ".env.example"))) {
     throw "Missing root .env.example used by Linux worker deployment docs."
   }
