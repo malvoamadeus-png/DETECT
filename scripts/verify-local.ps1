@@ -100,6 +100,9 @@ try {
 
   Write-Host "== Linux preflight env fallback =="
   $preflightTemp = Join-Path $root ".tmp/preflight-env"
+  if (Test-Path -LiteralPath $preflightTemp) {
+    Remove-Item -LiteralPath $preflightTemp -Recurse -Force
+  }
   New-Item -ItemType Directory -Force -Path $preflightTemp | Out-Null
   $preflightEnv = Join-Path $preflightTemp ".env"
   @"
@@ -107,12 +110,18 @@ OPENAI_API_KEY=x
 OPENAI_BASE_URL=https://example.test/v1
 DATABASE_URL=postgres://user.projref@host.example/db
 "@ | Set-Content -LiteralPath $preflightEnv -Encoding utf8
-  $bashRoot = (bash -lc "pwd").Trim()
-  $preflight = bash -c "DETECT_APP_DIR='$bashRoot' DETECT_ENV_FILE='$bashRoot/.tmp/preflight-env/.env' DETECT_SERVICE_NAME='detect-worker' scripts/linux/preflight-worker.sh" 2>&1
-  $preflightText = ($preflight -join "`n")
-  if ($LASTEXITCODE -ne 0 -or $preflightText -notlike "*database_url=ok*") {
-    Write-Host $preflightText
-    throw "Linux preflight DATABASE_URL fallback check failed"
+  try {
+    $bashRoot = (bash -lc "pwd").Trim()
+    $preflight = bash -c "DETECT_APP_DIR='$bashRoot' DETECT_ENV_FILE='$bashRoot/.tmp/preflight-env/.env' DETECT_SERVICE_NAME='detect-worker' scripts/linux/preflight-worker.sh" 2>&1
+    $preflightText = ($preflight -join "`n")
+    if ($LASTEXITCODE -ne 0 -or $preflightText -notlike "*database_url=ok*") {
+      Write-Host $preflightText
+      throw "Linux preflight DATABASE_URL fallback check failed"
+    }
+  } finally {
+    if (Test-Path -LiteralPath $preflightTemp) {
+      Remove-Item -LiteralPath $preflightTemp -Recurse -Force
+    }
   }
   Write-Host "linux_preflight_database_url_fallback=ok"
 
