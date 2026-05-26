@@ -82,9 +82,21 @@ try {
   }
 
   if (-not $SkipFrontendBuild) {
-    Write-Host "== Frontend build =="
+    Write-Host "== Frontend lint =="
     Push-Location frontend
     try {
+      npm.cmd run lint
+      if ($LASTEXITCODE -ne 0) {
+        throw "frontend lint failed"
+      }
+
+      Write-Host "== Frontend typecheck =="
+      npm.cmd run typecheck
+      if ($LASTEXITCODE -ne 0) {
+        throw "frontend typecheck failed"
+      }
+
+      Write-Host "== Frontend build =="
       npm.cmd run build
       if ($LASTEXITCODE -ne 0) {
         throw "frontend build failed"
