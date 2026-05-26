@@ -33,6 +33,32 @@ function Test-Command {
   return [bool](Get-Command $Name -ErrorAction SilentlyContinue)
 }
 
+function Test-GitHubOriginMain {
+  param(
+    [string]$Repo,
+    [string]$ExpectedSha
+  )
+  $remoteHead = ""
+  try {
+    $remoteHead = (git ls-remote --heads origin main 2>$null)
+  } catch {
+    $remoteHead = ""
+  }
+  if ($LASTEXITCODE -eq 0 -and $remoteHead) {
+    Write-Check "github_origin_main" $true "source=git"
+    return
+  }
+  try {
+    $headers = @{ "User-Agent" = "DETECT-readiness" }
+    $uri = "https://api.github.com/repos/$Repo/branches/main"
+    $branch = Invoke-RestMethod -Headers $headers -Uri $uri -TimeoutSec 30
+    $remoteSha = [string]$branch.commit.sha
+    Write-Check "github_origin_main" ($remoteSha -eq $ExpectedSha) "source=api remote=$($remoteSha.Substring(0, 7)) expected=$($ExpectedSha.Substring(0, 7))"
+  } catch {
+    Write-Check "github_origin_main" $false "git and api failed: $($_.Exception.Message)"
+  }
+}
+
 function Test-GitHubActions {
   param(
     [string]$Repo,
@@ -83,10 +109,9 @@ try {
   Write-Host "== repository =="
   $status = git status --short
   Write-Check "git_clean" (-not $status) ($(if ($status) { "working tree has changes or ignored-only status hidden" } else { "" }))
-  $remoteHead = git ls-remote --heads origin main
-  Write-Check "github_origin_main" ([bool]$remoteHead)
   $originSha = (git rev-parse origin/main).Trim()
   $headSha = (git rev-parse HEAD).Trim()
+  Test-GitHubOriginMain -Repo $GitHubRepo -ExpectedSha $headSha
   Write-Check "head_matches_origin_main" ($headSha -eq $originSha) "head=$($headSha.Substring(0, 7)) origin=$($originSha.Substring(0, 7))"
   Test-WorkflowFile -Path (Join-Path $root ".github/workflows/ci.yml")
   if ($SkipGitHubActionsCheck) {

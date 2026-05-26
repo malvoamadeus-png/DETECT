@@ -19,6 +19,18 @@ try {
     }
     Write-Host "$($script.Name)=ok"
   }
+  $readyScript = Get-Content -Raw -LiteralPath (Join-Path $root "scripts/check-deploy-ready.ps1")
+  $requiredReadinessFragments = @(
+    "function Test-GitHubOriginMain",
+    "source=api",
+    "https://api.github.com/repos/`$Repo/branches/main"
+  )
+  foreach ($fragment in $requiredReadinessFragments) {
+    if ($readyScript -notlike "*$fragment*") {
+      throw "check-deploy-ready.ps1 is missing GitHub origin fallback fragment: $fragment"
+    }
+  }
+  Write-Host "readiness_github_origin_fallback=ok"
 
   Write-Host "== Bash syntax =="
   bash -n scripts/linux/bootstrap-server.sh scripts/linux/install-worker.sh scripts/linux/healthcheck-worker.sh scripts/linux/restart-worker.sh scripts/linux/logs-worker.sh scripts/linux/preflight-worker.sh

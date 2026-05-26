@@ -42,6 +42,8 @@ Optional target checks:
 
 Use `-Strict` for production gates. If GitHub checks are unavailable but local preflight has passed and you intentionally want to proceed, add `-SkipGitHubActionsCheck`. If Vercel is managed through the dashboard rather than local CLI, add `-SkipVercelCliCheck`.
 
+The readiness check first tries the configured git remote, then falls back to the public GitHub branch API for `main` if SSH/GitHub networking is temporarily unreliable.
+
 ## Linux Worker
 
 Suggested path:
