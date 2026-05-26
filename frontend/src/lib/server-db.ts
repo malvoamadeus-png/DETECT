@@ -11,6 +11,9 @@ export function createDatabaseClient() {
   }
   return new Client({
     connectionString: dsn,
+    connectionTimeoutMillis: 5000,
+    query_timeout: 10000,
+    statement_timeout: 10000,
     ssl: { rejectUnauthorized: false }
   });
 }

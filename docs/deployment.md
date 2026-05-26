@@ -202,7 +202,7 @@ copy frontend\.env.production.example frontend\.env.production.local
 .\scripts\check-vercel-env.ps1
 ```
 
-The frontend reads `/api/dashboard`, and that server route queries `detect_dashboard` through `SUPABASE_DB_URL`. This keeps the browser read-only and avoids exposing DB credentials.
+The frontend reads `/api/dashboard`, and that server route queries `detect_dashboard` through `SUPABASE_DB_URL`. This keeps the browser read-only and avoids exposing DB credentials. The server-side Postgres client uses SSL plus explicit connection/query/statement timeouts so Vercel functions fail fast instead of hanging on database connectivity issues.
 
 After deployment, open:
 

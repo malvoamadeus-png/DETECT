@@ -170,6 +170,12 @@ DATABASE_URL=postgres://user.projref@host.example/db
         throw "frontend API limit checks failed"
       }
 
+      Write-Host "== Frontend server DB checks =="
+      npm.cmd run check:server-db
+      if ($LASTEXITCODE -ne 0) {
+        throw "frontend server DB checks failed"
+      }
+
       Write-Host "== Frontend build =="
       npm.cmd run build
       if ($LASTEXITCODE -ne 0) {
