@@ -31,6 +31,26 @@ sudo chown "`$(id -u):`$(id -g)" '$AppDir'
 "@
 }
 
+function Get-RemoteDependencyBootstrapScript {
+  @"
+set -euo pipefail
+if command -v git >/dev/null 2>&1 && command -v python3 >/dev/null 2>&1; then
+  exit 0
+fi
+if command -v apt-get >/dev/null 2>&1; then
+  sudo apt-get update
+  sudo apt-get install -y git python3 python3-venv python3-pip ca-certificates
+elif command -v dnf >/dev/null 2>&1; then
+  sudo dnf install -y git python3 python3-pip ca-certificates
+elif command -v yum >/dev/null 2>&1; then
+  sudo yum install -y git python3 python3-pip ca-certificates
+else
+  echo "Unsupported Linux package manager. Install git, python3, python3-venv, and python3-pip manually." >&2
+  exit 1
+fi
+"@
+}
+
 if (-not (Get-Command ssh -ErrorAction SilentlyContinue)) {
   throw "ssh is required in PATH."
 }
@@ -51,7 +71,13 @@ if ($UploadEnv) {
   }
 }
 
-$remoteScript = (Get-RemoteBootstrapScript) + @"
+$remoteScript = (Get-RemoteBootstrapScript)
+
+if (-not $SkipBootstrap) {
+  $remoteScript += "`n" + (Get-RemoteDependencyBootstrapScript)
+}
+
+$remoteScript += @"
 
 if [ ! -d '$AppDir/.git' ]; then
   mkdir -p "`$(dirname '$AppDir')"
