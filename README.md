@@ -55,6 +55,17 @@ npm.cmd --prefix frontend install
 
 The frontend is a read-only dashboard. On Vercel, set the root directory to `frontend` and add `SUPABASE_DB_URL` so `/api/dashboard` reads the same database as the worker. `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are optional fallback variables.
 
+## Linux Worker Deployment
+
+```bash
+cd /opt/DETECT
+bash scripts/linux/install-worker.sh
+sudo systemctl restart detect-worker.service
+bash scripts/linux/healthcheck-worker.sh
+```
+
+Create `/opt/DETECT/.env` from `.env.example` before starting the service. Do not commit the real `.env`.
+
 ## Supabase Env Alignment
 
 `SUPABASE_DB_URL`, `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SUPABASE_URL`, and `NEXT_PUBLIC_SUPABASE_ANON_KEY` must point to the same Supabase project. If the backend migration succeeds but the frontend says `detect_dashboard` is missing from the schema cache, the usual cause is a DB URL for one project and an anon URL/key for another project.

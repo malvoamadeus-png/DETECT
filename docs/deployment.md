@@ -14,7 +14,20 @@ Suggested path:
 /opt/DETECT
 ```
 
-Initial setup:
+First-time checkout:
+
+```bash
+sudo mkdir -p /opt
+sudo chown "$USER":"$USER" /opt
+git clone git@github.com:malvoamadeus-png/DETECT.git /opt/DETECT
+cd /opt/DETECT
+cp .env.example .env
+nano .env
+```
+
+Fill `/opt/DETECT/.env` with the real values from the local project or secret manager. Do not paste secrets into shell history.
+
+Manual setup:
 
 ```bash
 cd /opt/DETECT
@@ -23,6 +36,16 @@ python3 -m venv .venv
 pip install -r backend/requirements.txt
 python backend/src/main.py migrate
 python backend/src/main.py run-once --limit 3
+```
+
+Repeatable scripted setup/update:
+
+```bash
+cd /opt/DETECT
+export DETECT_APP_DIR=/opt/DETECT
+export DETECT_REPO_URL=git@github.com:malvoamadeus-png/DETECT.git
+bash scripts/linux/install-worker.sh
+sudo systemctl restart detect-worker.service
 ```
 
 Long-running command:
@@ -64,6 +87,13 @@ systemctl status detect-worker.service
 journalctl -u detect-worker.service -n 120 --no-pager
 ```
 
+Scripted health check:
+
+```bash
+cd /opt/DETECT
+bash scripts/linux/healthcheck-worker.sh
+```
+
 ## Vercel
 
 Project settings:
@@ -82,6 +112,18 @@ SUPABASE_DB_URL
 ```
 
 The frontend reads `/api/dashboard`, and that server route queries `detect_dashboard` through `SUPABASE_DB_URL`. This keeps the browser read-only and avoids exposing DB credentials.
+
+After deployment, open:
+
+```text
+https://<your-vercel-domain>/api/health
+```
+
+Expected shape:
+
+```json
+{"ok":true,"dashboard_rows":1}
+```
 
 Optional fallback variables:
 

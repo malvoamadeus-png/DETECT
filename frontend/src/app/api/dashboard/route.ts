@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { Client } from "pg";
+
+import { createDatabaseClient, databaseUrl } from "@/lib/server-db";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -10,22 +11,14 @@ function safeLimit(value: string | null) {
   return Math.max(1, Math.min(500, Math.floor(parsed)));
 }
 
-function databaseUrl() {
-  return process.env.SUPABASE_DB_URL || process.env.DATABASE_URL || "";
-}
-
 export async function GET(request: Request) {
-  const dsn = databaseUrl();
-  if (!dsn) {
+  if (!databaseUrl()) {
     return new NextResponse("Missing SUPABASE_DB_URL or DATABASE_URL", { status: 503 });
   }
 
   const url = new URL(request.url);
   const limit = safeLimit(url.searchParams.get("limit"));
-  const client = new Client({
-    connectionString: dsn,
-    ssl: { rejectUnauthorized: false }
-  });
+  const client = createDatabaseClient();
 
   try {
     await client.connect();
