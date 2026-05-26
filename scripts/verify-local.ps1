@@ -55,6 +55,12 @@ try {
     throw "python compile failed"
   }
 
+  Write-Host "== Backend tests =="
+  python -m pytest backend/tests
+  if ($LASTEXITCODE -ne 0) {
+    throw "backend tests failed"
+  }
+
   if (-not $SkipEnvCheck) {
     Write-Host "== Backend env =="
     python backend/src/main.py check-env
