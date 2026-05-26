@@ -20,6 +20,16 @@ function Invoke-Remote {
   }
 }
 
+function Get-RemoteBootstrapScript {
+  @"
+set -euo pipefail
+if [ ! -d '$AppDir' ]; then
+  sudo mkdir -p '$AppDir'
+fi
+sudo chown "`$(id -u):`$(id -g)" '$AppDir'
+"@
+}
+
 if (-not (Get-Command ssh -ErrorAction SilentlyContinue)) {
   throw "ssh is required in PATH."
 }
@@ -32,19 +42,16 @@ if ($UploadEnv) {
     throw "Env file not found: $EnvPath"
   }
   Write-Host "Uploading env file to ${HostName}:$AppDir/.env"
-  Invoke-Remote "mkdir -p '$AppDir'"
+  $bootstrap = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes((Get-RemoteBootstrapScript)))
+  Invoke-Remote "echo '$bootstrap' | base64 -d | bash"
   scp $EnvPath "${HostName}:$AppDir/.env"
   if ($LASTEXITCODE -ne 0) {
     throw "scp failed while uploading env file."
   }
 }
 
-$remoteScript = @"
-set -euo pipefail
-if [ ! -d '$AppDir' ]; then
-  sudo mkdir -p '$AppDir'
-  sudo chown "`$(id -u):`$(id -g)" '$AppDir'
-fi
+$remoteScript = (Get-RemoteBootstrapScript) + @"
+
 if [ ! -d '$AppDir/.git' ]; then
   mkdir -p "`$(dirname '$AppDir')"
   git clone '$RepoUrl' '$AppDir'

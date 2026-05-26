@@ -33,3 +33,28 @@ jobs:
       - run: pip install -r backend/requirements.txt
       - run: python -m compileall backend
       - run: bash -n scripts/linux/install-worker.sh scripts/linux/healthcheck-worker.sh scripts/linux/restart-worker.sh
+
+  scripts:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse PowerShell scripts
+        shell: pwsh
+        run: |
+          $scripts = @(
+            "scripts/deploy-linux.ps1",
+            "scripts/run-frontend.ps1",
+            "scripts/run-once.ps1",
+            "scripts/run-worker.ps1",
+            "scripts/smoke-vercel.ps1"
+          )
+          foreach ($script in $scripts) {
+            $tokens = $null
+            $errors = $null
+            $null = [System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path $script), [ref]$tokens, [ref]$errors)
+            if ($errors -and $errors.Count) {
+              $errors | Format-List | Out-String | Write-Error
+              exit 1
+            }
+            Write-Host "$script syntax ok"
+          }
