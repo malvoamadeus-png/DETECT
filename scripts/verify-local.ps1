@@ -34,9 +34,8 @@ try {
 
   $workflow = Get-Content -Raw -LiteralPath (Join-Path $root ".github/workflows/ci.yml")
   $requiredWorkflowFragments = @(
-    "git fetch --depth 1 origin",
+    'git fetch --depth 1 origin "${GITHUB_REF}"',
     "git checkout --force --detach FETCH_HEAD",
-    "GITHUB_HEAD_REF:-${GITHUB_REF_NAME}",
     "Frontend API error checks",
     "Frontend server DB checks"
   )
@@ -47,6 +46,9 @@ try {
   }
   if ($workflow -like "*actions/checkout@v4*") {
     throw "CI workflow should not use actions/checkout@v4 after manual checkout hardening."
+  }
+  if ($workflow -like "*GITHUB_HEAD_REF*") {
+    throw "CI workflow should fetch GITHUB_REF so pull_request merge refs and fork PRs work."
   }
   Write-Host "workflow_manual_checkout=ok"
 
