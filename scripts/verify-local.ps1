@@ -27,6 +27,24 @@ try {
   }
   Write-Host "bash_scripts=ok"
 
+  Write-Host "== Linux preflight env fallback =="
+  $preflightTemp = Join-Path $root ".tmp/preflight-env"
+  New-Item -ItemType Directory -Force -Path $preflightTemp | Out-Null
+  $preflightEnv = Join-Path $preflightTemp ".env"
+  @"
+OPENAI_API_KEY=x
+OPENAI_BASE_URL=https://example.test/v1
+DATABASE_URL=postgres://user.projref@host.example/db
+"@ | Set-Content -LiteralPath $preflightEnv -Encoding utf8
+  $bashRoot = (bash -lc "pwd").Trim()
+  $preflight = bash -c "DETECT_APP_DIR='$bashRoot' DETECT_ENV_FILE='$bashRoot/.tmp/preflight-env/.env' DETECT_SERVICE_NAME='detect-worker' scripts/linux/preflight-worker.sh" 2>&1
+  $preflightText = ($preflight -join "`n")
+  if ($LASTEXITCODE -ne 0 -or $preflightText -notlike "*database_url=ok*") {
+    Write-Host $preflightText
+    throw "Linux preflight DATABASE_URL fallback check failed"
+  }
+  Write-Host "linux_preflight_database_url_fallback=ok"
+
   Write-Host "== Remote deploy dry-run =="
   $deployDryRun = powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root "scripts/deploy-linux.ps1") -HostName "dry-run@example" -DryRun 2>&1
   if ($LASTEXITCODE -ne 0) {

@@ -7,6 +7,26 @@ ENV_FILE="${DETECT_ENV_FILE:-$APP_DIR/.env}"
 
 status=0
 
+env_key_is_set() {
+  local key="$1"
+  python3 - "$ENV_FILE" "$key" <<'PY'
+from pathlib import Path
+import sys
+
+path = Path(sys.argv[1])
+key = sys.argv[2]
+try:
+    lines = path.read_text(encoding="utf-8-sig").splitlines()
+except OSError:
+    raise SystemExit(1)
+prefix = f"{key}="
+for line in lines:
+    if line.strip().startswith(prefix):
+        raise SystemExit(0)
+raise SystemExit(1)
+PY
+}
+
 check_command() {
   local name="$1"
   if command -v "$name" >/dev/null 2>&1; then
@@ -19,11 +39,32 @@ check_command() {
 
 check_env_key() {
   local key="$1"
-  if grep -Eq "^[[:space:]]*${key}=" "$ENV_FILE"; then
+  if env_key_is_set "$key"; then
     echo "${key}=set"
   else
     echo "${key}=missing" >&2
     status=1
+  fi
+}
+
+check_any_env_key() {
+  local label="$1"
+  shift
+  local found=0
+  local key
+  for key in "$@"; do
+    if env_key_is_set "$key"; then
+      echo "${key}=set"
+      found=1
+    else
+      echo "${key}=missing"
+    fi
+  done
+  if [ "$found" -eq 0 ]; then
+    echo "${label}=missing" >&2
+    status=1
+  else
+    echo "${label}=ok"
   fi
 }
 
@@ -44,7 +85,7 @@ if [ -f "$ENV_FILE" ]; then
   echo "env_file=ok $ENV_FILE"
   check_env_key OPENAI_API_KEY
   check_env_key OPENAI_BASE_URL
-  check_env_key SUPABASE_DB_URL
+  check_any_env_key database_url SUPABASE_DB_URL DATABASE_URL
 else
   echo "env_file=missing $ENV_FILE" >&2
   status=1

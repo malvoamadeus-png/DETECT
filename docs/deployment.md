@@ -64,6 +64,8 @@ nano .env
 
 Fill `/opt/DETECT/.env` with the real values from the local project or secret manager. Do not paste secrets into shell history.
 
+The worker accepts either `SUPABASE_DB_URL` or `DATABASE_URL`; `SUPABASE_DB_URL` remains the preferred name because it makes the Vercel server route and worker config easier to compare.
+
 Manual setup:
 
 ```bash
