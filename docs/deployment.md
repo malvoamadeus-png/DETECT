@@ -60,7 +60,7 @@ First-time checkout:
 ```bash
 sudo mkdir -p /opt
 sudo chown "$USER":"$USER" /opt
-git clone git@github.com:malvoamadeus-png/DETECT.git /opt/DETECT
+git clone https://github.com/malvoamadeus-png/DETECT.git /opt/DETECT
 cd /opt/DETECT
 bash scripts/linux/bootstrap-server.sh
 cp .env.example .env
@@ -88,7 +88,7 @@ Repeatable scripted setup/update:
 ```bash
 cd /opt/DETECT
 export DETECT_APP_DIR=/opt/DETECT
-export DETECT_REPO_URL=git@github.com:malvoamadeus-png/DETECT.git
+export DETECT_REPO_URL=https://github.com/malvoamadeus-png/DETECT.git
 bash scripts/linux/install-worker.sh
 sudo systemctl restart detect-worker.service
 ```
@@ -165,6 +165,8 @@ cd D:\Coding\DETECT
 ```
 
 By default this first bootstraps minimal packages before cloning the repo, then runs `scripts/linux/bootstrap-server.sh` after checkout. The bootstrap may use `sudo` to install `git`, `python3`, `python3-venv`, `python3-pip`, and CA certificates, and it verifies that both `python3 -m venv` and `python3 -m pip` work before continuing. Use `-SkipBootstrap` if the server is already prepared.
+
+The default remote checkout URL for Linux deploys is the public HTTPS repo URL, which avoids requiring a GitHub SSH key on the server. Override `-RepoUrl` or `DETECT_REPO_URL` only if you intentionally want a different remote.
 
 Preview the generated remote commands before connecting:
 

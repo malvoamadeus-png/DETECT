@@ -2,7 +2,7 @@
 set -euo pipefail
 
 APP_DIR="${DETECT_APP_DIR:-/opt/DETECT}"
-REPO_URL="${DETECT_REPO_URL:-git@github.com:malvoamadeus-png/DETECT.git}"
+REPO_URL="${DETECT_REPO_URL:-https://github.com/malvoamadeus-png/DETECT.git}"
 SERVICE_NAME="${DETECT_SERVICE_NAME:-detect-worker}"
 
 if ! command -v git >/dev/null 2>&1; then

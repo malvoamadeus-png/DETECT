@@ -3,7 +3,7 @@ param(
   [string]$HostName,
 
   [string]$AppDir = "/opt/DETECT",
-  [string]$RepoUrl = "git@github.com:malvoamadeus-png/DETECT.git",
+  [string]$RepoUrl = "https://github.com/malvoamadeus-png/DETECT.git",
   [string]$ServiceName = "detect-worker",
   [string]$EnvPath = ".env",
   [switch]$UploadEnv,

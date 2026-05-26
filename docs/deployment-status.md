@@ -5,12 +5,12 @@ Last audited: 2026-05-26 Asia/Shanghai
 ## Proven Complete
 
 - Code is pushed to GitHub remote `git@github.com:malvoamadeus-png/DETECT.git`.
-- Latest runtime/code audit before this status note was commit `6792746`.
-- Local preflight passes for runtime-audited commit `7386e3c`, including 29 backend tests, worker deploy dry-runs, CI checkout probe, backend environment check, tracked-file secret scan, frontend lint/typecheck, dashboard API limit checks, dashboard API error-response checks, server DB config checks, and frontend production build.
-- Strict readiness also passes for current head `6792746` with GitHub Actions verified and Vercel CLI / real target checks intentionally skipped until external targets are available.
+- Latest runtime/code audit before this status note was commit `71a6ef1`.
+- Local preflight passes for current head `71a6ef1`, including 29 backend tests, worker deploy dry-runs, CI checkout probe, backend environment check, tracked-file secret scan, frontend lint/typecheck, dashboard API limit checks, dashboard API error-response checks, server DB config checks, and frontend production build.
+- Strict readiness also passes for current head `71a6ef1` with GitHub Actions verified and Vercel CLI / real target checks intentionally skipped until external targets are available.
 - GitHub Actions has `push`, `pull_request`, and `workflow_dispatch` triggers. The workflow has been hardened with explicit `contents: read` permission, manual HTTPS checkout, and Ubuntu-compatible PowerShell script calls.
 - GitHub Actions is green for commit `7386e3c`: `https://github.com/malvoamadeus-png/DETECT/actions/runs/26451705556`.
-- GitHub Actions is green for current head `6792746`: `https://github.com/malvoamadeus-png/DETECT/actions/runs/26452197432`.
+- GitHub Actions is green for current head `71a6ef1`: `https://github.com/malvoamadeus-png/DETECT/actions/runs/26452916418`.
 - Supabase migrations have been applied locally through the backend migration command.
 - Supabase migration structure is covered by local preflight and CI wiring.
 - Backend worker can run a real analysis pass and has produced dashboard rows in Supabase.
@@ -26,6 +26,7 @@ Last audited: 2026-05-26 Asia/Shanghai
 - Linux worker install, restart, health, log, and bootstrap scripts exist.
 - Linux worker server-side preflight and health scripts exist for read-only diagnostics before/after install, accept either `SUPABASE_DB_URL` or `DATABASE_URL`, handle UTF-8 BOM env files, assert service activity, and can enforce a minimum dashboard row count.
 - Windows helper scripts exist for Linux worker deploy, Vercel deploy, readiness checks, smoke tests, and local preflight.
+- Linux deploy scripts now default to the public HTTPS GitHub repo URL so first-server bootstrap does not require a GitHub SSH key.
 - Vercel env sync helper exists to upsert `SUPABASE_DB_URL` from local `.env` through the Vercel CLI without printing secret values.
 - Readiness checks support strict production gating with explicit skips for known external constraints.
 - Final deployment orchestrator exists for local preflight, readiness, optional Vercel env sync, optional Vercel deploy, worker deploy, worker smoke testing, and frontend smoke testing once external targets are known.
