@@ -5,10 +5,11 @@ Last audited: 2026-05-26 Asia/Shanghai
 ## Proven Complete
 
 - Code is pushed to GitHub remote `git@github.com:malvoamadeus-png/DETECT.git`.
-- Local `main` and `origin/main` were aligned at runtime-audited commit `69604c2` before this documentation update.
-- Local preflight passes for runtime-audited commit `69604c2`, including 29 backend tests, worker deploy dry-runs, CI checkout probe, backend environment check, tracked-file secret scan, frontend lint/typecheck, dashboard API limit checks, dashboard API error-response checks, server DB config checks, and frontend production build.
-- Strict readiness passes for runtime-audited commit `69604c2` with GitHub Actions, Vercel CLI, and real target checks intentionally skipped until external targets are available.
-- GitHub Actions has `push`, `pull_request`, and `workflow_dispatch` triggers. The workflow has been hardened with explicit `contents: read` permission and manual HTTPS checkout. Anonymous GitHub API status polling is currently rate-limited; use `GITHUB_TOKEN` or `GH_TOKEN` with `scripts/trigger-ci.ps1 -StatusOnly` for authoritative CI status.
+- Latest runtime/code audit before this status note was commit `cea600d`.
+- Local preflight passes for runtime-audited commit `cea600d`, including 29 backend tests, worker deploy dry-runs, CI checkout probe, backend environment check, tracked-file secret scan, frontend lint/typecheck, dashboard API limit checks, dashboard API error-response checks, server DB config checks, and frontend production build.
+- Strict readiness passes for runtime-audited commit `cea600d` with GitHub Actions verified and Vercel CLI / real target checks intentionally skipped until external targets are available.
+- GitHub Actions has `push`, `pull_request`, and `workflow_dispatch` triggers. The workflow has been hardened with explicit `contents: read` permission, manual HTTPS checkout, and Ubuntu-compatible PowerShell script calls.
+- GitHub Actions is green for commit `cea600d`: `https://github.com/malvoamadeus-png/DETECT/actions/runs/26449695266`.
 - Supabase migrations have been applied locally through the backend migration command.
 - Supabase migration structure is covered by local preflight and CI wiring.
 - Backend worker can run a real analysis pass and has produced dashboard rows in Supabase.
@@ -35,7 +36,6 @@ Last audited: 2026-05-26 Asia/Shanghai
 - Linux worker is not deployed to a real server because no SSH target has been provided.
 - Vercel production is not verified because Vercel CLI is not installed locally and `frontend/.vercel/project.json` is not linked.
 - Public deployed URL is not available yet, so production smoke test cannot be run.
-- GitHub Actions status is not authoritative from this machine while anonymous GitHub API status polling is rate-limited and no `GITHUB_TOKEN`/`GH_TOKEN` is configured.
 
 ## Required To Finish Deployment
 
