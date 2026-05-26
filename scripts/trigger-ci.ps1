@@ -9,11 +9,16 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-function Get-GitHubToken {
+function Get-OptionalGitHubToken {
   $token = $env:GITHUB_TOKEN
   if (-not $token) {
     $token = $env:GH_TOKEN
   }
+  return $token
+}
+
+function Get-GitHubToken {
+  $token = Get-OptionalGitHubToken
   if (-not $token) {
     throw "Missing GITHUB_TOKEN or GH_TOKEN. Create a GitHub token with Actions write access, set it in the environment, then rerun."
   }
@@ -44,7 +49,22 @@ function Invoke-GitHubPublic {
     "Accept"     = "application/vnd.github+json"
     "User-Agent" = "DETECT-ci-status"
   }
-  return Invoke-RestMethod -Method "GET" -Headers $headers -Uri $Uri -TimeoutSec 30
+  $token = Get-OptionalGitHubToken
+  if ($token) {
+    $headers["Authorization"] = "Bearer $token"
+    $headers["X-GitHub-Api-Version"] = "2022-11-28"
+  }
+  try {
+    return Invoke-RestMethod -Method "GET" -Headers $headers -Uri $Uri -TimeoutSec 30
+  } catch {
+    $response = $_.Exception.Response
+    $statusCode = if ($response) { [int]$response.StatusCode } else { 0 }
+    if ($statusCode -eq 403) {
+      Write-Host "ci_status=rate_limited uri=$Uri set GITHUB_TOKEN or GH_TOKEN for higher GitHub API limits"
+      return $null
+    }
+    throw
+  }
 }
 
 function Show-CIStatus {
@@ -57,6 +77,9 @@ function Show-CIStatus {
   $workflowPayload = Invoke-GitHubPublic -Uri $workflowUri
   $branchPayload = Invoke-GitHubPublic -Uri $branchUri
   $runsPayload = Invoke-GitHubPublic -Uri $runsUri
+  if (-not $repoPayload -or -not $workflowPayload -or -not $branchPayload -or -not $runsPayload) {
+    return
+  }
   $headSha = [string]$branchPayload.commit.sha
   $matchingRun = @($runsPayload.workflow_runs | Where-Object { $_.head_sha -eq $headSha } | Select-Object -First 1)
 

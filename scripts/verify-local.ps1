@@ -50,6 +50,19 @@ try {
   }
   Write-Host "workflow_manual_checkout=ok"
 
+  $triggerScript = Get-Content -Raw -LiteralPath (Join-Path $root "scripts/trigger-ci.ps1")
+  $requiredTriggerFragments = @(
+    "function Get-OptionalGitHubToken",
+    "ci_status=rate_limited",
+    "set GITHUB_TOKEN or GH_TOKEN"
+  )
+  foreach ($fragment in $requiredTriggerFragments) {
+    if ($triggerScript -notlike "*$fragment*") {
+      throw "trigger-ci.ps1 is missing status/rate-limit handling fragment: $fragment"
+    }
+  }
+  Write-Host "trigger_ci_rate_limit_handling=ok"
+
   Write-Host "== Bash syntax =="
   bash -n scripts/linux/bootstrap-server.sh scripts/linux/install-worker.sh scripts/linux/healthcheck-worker.sh scripts/linux/restart-worker.sh scripts/linux/logs-worker.sh scripts/linux/preflight-worker.sh
   if ($LASTEXITCODE -ne 0) {

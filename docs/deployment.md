@@ -27,6 +27,8 @@ Check whether the workflow is active and whether the current branch head has an 
 .\scripts\trigger-ci.ps1 -StatusOnly
 ```
 
+`-StatusOnly` uses `GITHUB_TOKEN` or `GH_TOKEN` when present; without a token, GitHub's anonymous API rate limit can prevent status polling, but the script reports that condition without printing secrets.
+
 If you have a GitHub token with Actions write access:
 
 ```powershell
