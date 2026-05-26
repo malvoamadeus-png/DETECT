@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+venv/
+
+# Node / Next
+node_modules/
+.next/
+out/
+dist/
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+
+# Env / secrets
+.env
+.env.local
+.env.*.local
+
+# Data: keep folders, ignore generated payloads and large artifacts
+data/raw/*
+data/processed/*
+data/exports/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/exports/.gitkeep
+*.sqlite
+*.db
+*.parquet
+*.csv
+*.jsonl
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.tmp/

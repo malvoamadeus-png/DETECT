@@ -1,0 +1,4 @@
+1. 通过API获取有哪些最新代币，轮询间隔待定
+2. 获取feeRecipient的xUsername，进入到主页，获取其历史发言（这里需要调研能获取到多少历史发言）
+3. 记录下github，包括api天然自带的（"websiteUrl": "https://github.com/varu63/Talentiq"），和主页中能拿到的
+4. 分析github水平（用什么方法？待定）
