@@ -3,7 +3,7 @@
 import { useEffect, useState, useTransition } from "react";
 import { Activity, Brain, ExternalLink, GitBranch, Radar, Search, Sparkles, Timer } from "lucide-react";
 
-import { getSupabaseClient } from "@/lib/supabase";
+import { loadDashboardRows } from "@/lib/dashboard";
 import type { DashboardRow, ScoreKey } from "@/types/dashboard";
 
 const POLL_MS = 5_000;
@@ -29,19 +29,6 @@ const stageText: Record<string, string> = {
   completed: "Assessment complete",
   failed: "Needs attention"
 };
-
-async function loadRows(): Promise<DashboardRow[]> {
-  const supabase = getSupabaseClient();
-  const { data, error } = await supabase
-    .from("detect_dashboard")
-    .select("*")
-    .order("discovered_at", { ascending: false })
-    .limit(80);
-  if (error) {
-    throw new Error(error.message);
-  }
-  return (data ?? []) as DashboardRow[];
-}
 
 function compactAddress(value: string | null | undefined) {
   if (!value) return "unknown";
@@ -76,7 +63,7 @@ export default function Home() {
 
     async function refresh() {
       try {
-        const nextRows = await loadRows();
+        const nextRows = await loadDashboardRows(80);
         if (!alive) return;
         startTransition(() => {
           setRows(nextRows);
@@ -170,7 +157,7 @@ export default function Home() {
             <div>
               <h2>{selected ? `$${selected.token_symbol || "TOKEN"} recipient intelligence` : "Waiting for data"}</h2>
               <span className="muted">
-                {lastUpdated ? `Live Supabase sync every ${POLL_MS / 1000}s · ${lastUpdated.toLocaleTimeString()}` : "Preparing live sync"}
+                {lastUpdated ? `Live Supabase sync every ${POLL_MS / 1000}s / ${lastUpdated.toLocaleTimeString()}` : "Preparing live sync"}
               </span>
             </div>
             <Activity size={18} />

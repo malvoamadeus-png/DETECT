@@ -53,7 +53,7 @@ npm.cmd --prefix frontend install
 .\scripts\run-frontend.ps1
 ```
 
-The frontend is a read-only dashboard. Vercel needs `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+The frontend is a read-only dashboard. On Vercel, set the root directory to `frontend` and add `SUPABASE_DB_URL` so `/api/dashboard` reads the same database as the worker. `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are optional fallback variables.
 
 ## Supabase Env Alignment
 

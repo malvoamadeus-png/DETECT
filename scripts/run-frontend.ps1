@@ -12,7 +12,7 @@ if (Test-Path $envPath) {
     $parts = $line.Split("=", 2)
     $name = $parts[0].Trim().TrimStart([char]0xFEFF)
     $value = $parts[1].Trim().Trim('"').Trim("'")
-    if ($name -in @("NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY")) {
+    if ($name -in @("SUPABASE_DB_URL", "DATABASE_URL", "NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY")) {
       [Environment]::SetEnvironmentVariable($name, $value, "Process")
     }
   }

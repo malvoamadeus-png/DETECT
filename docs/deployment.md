@@ -66,13 +66,30 @@ journalctl -u detect-worker.service -n 120 --no-pager
 
 ## Vercel
 
-Set these Vercel environment variables:
+Project settings:
+
+```text
+Root Directory: frontend
+Framework Preset: Next.js
+Build Command: npm run build
+Install Command: npm install
+```
+
+Recommended Vercel environment variable:
+
+```text
+SUPABASE_DB_URL
+```
+
+The frontend reads `/api/dashboard`, and that server route queries `detect_dashboard` through `SUPABASE_DB_URL`. This keeps the browser read-only and avoids exposing DB credentials.
+
+Optional fallback variables:
 
 ```text
 NEXT_PUBLIC_SUPABASE_URL
 NEXT_PUBLIC_SUPABASE_ANON_KEY
 ```
 
-The worker secrets should not be configured in Vercel unless a future server-side API is added.
+Use the fallback only when the public Supabase REST API points to the same project as the backend database.
 
 Important: the Vercel `NEXT_PUBLIC_SUPABASE_*` variables must belong to the same Supabase project as the worker's `SUPABASE_DB_URL`. If they point to different projects, the backend can write data successfully while the frontend still reports that `detect_dashboard` cannot be found in the schema cache.
