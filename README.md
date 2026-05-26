@@ -85,6 +85,12 @@ If Vercel CLI is installed and linked:
 .\scripts\deploy-vercel.ps1
 ```
 
+Check deployment readiness:
+
+```powershell
+.\scripts\check-deploy-ready.ps1
+```
+
 ## Supabase Env Alignment
 
 `SUPABASE_DB_URL`, `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SUPABASE_URL`, and `NEXT_PUBLIC_SUPABASE_ANON_KEY` must point to the same Supabase project. If the backend migration succeeds but the frontend says `detect_dashboard` is missing from the schema cache, the usual cause is a DB URL for one project and an anon URL/key for another project.

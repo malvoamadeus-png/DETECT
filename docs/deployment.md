@@ -6,6 +6,19 @@
 - Backend worker: long-lived Linux process, polls Bankr every 20 seconds.
 - Database: Supabase Postgres, migrated from local using `SUPABASE_DB_URL`.
 
+Run a local readiness check before deployment:
+
+```powershell
+cd D:\Coding\DETECT
+.\scripts\check-deploy-ready.ps1
+```
+
+Optional target checks:
+
+```powershell
+.\scripts\check-deploy-ready.ps1 -VercelBaseUrl https://<your-vercel-domain> -SshHost user@host
+```
+
 ## Linux Worker
 
 Suggested path:
