@@ -84,6 +84,8 @@ From Windows, once SSH is available:
 .\scripts\deploy-linux.ps1 -HostName user@host
 ```
 
+Linux worker deploys now default to the public HTTPS repo URL, so first-server bootstrap does not require a GitHub SSH key on the server.
+
 Or run the final deployment orchestrator once both the worker host and public frontend URL are known:
 
 ```powershell

@@ -5,12 +5,12 @@ Last audited: 2026-05-26 Asia/Shanghai
 ## Proven Complete
 
 - Code is pushed to GitHub remote `git@github.com:malvoamadeus-png/DETECT.git`.
-- Latest runtime/code audit before this status note was commit `71a6ef1`.
-- Local preflight passes for current head `71a6ef1`, including 29 backend tests, worker deploy dry-runs, CI checkout probe, backend environment check, tracked-file secret scan, frontend lint/typecheck, dashboard API limit checks, dashboard API error-response checks, server DB config checks, and frontend production build.
-- Strict readiness also passes for current head `71a6ef1` with GitHub Actions verified and Vercel CLI / real target checks intentionally skipped until external targets are available.
+- Latest runtime/code audit before this status note was commit `e507746`.
+- Local preflight passes for current head `e507746`, including 29 backend tests, worker deploy dry-runs, CI checkout probe, backend environment check, tracked-file secret scan, frontend lint/typecheck, dashboard API limit checks, dashboard API error-response checks, server DB config checks, and frontend production build.
+- Strict readiness also passes for current head `e507746` with GitHub Actions verified and Vercel CLI / real target checks intentionally skipped until external targets are available.
 - GitHub Actions has `push`, `pull_request`, and `workflow_dispatch` triggers. The workflow has been hardened with explicit `contents: read` permission, manual HTTPS checkout, and Ubuntu-compatible PowerShell script calls.
 - GitHub Actions is green for commit `7386e3c`: `https://github.com/malvoamadeus-png/DETECT/actions/runs/26451705556`.
-- GitHub Actions is green for current head `71a6ef1`: `https://github.com/malvoamadeus-png/DETECT/actions/runs/26452916418`.
+- GitHub Actions is green for current head `e507746`: `https://github.com/malvoamadeus-png/DETECT/actions/runs/26453339191`.
 - Supabase migrations have been applied locally through the backend migration command.
 - Supabase migration structure is covered by local preflight and CI wiring.
 - Backend worker can run a real analysis pass and has produced dashboard rows in Supabase.
