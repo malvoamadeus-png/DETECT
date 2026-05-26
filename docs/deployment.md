@@ -40,6 +40,7 @@ sudo mkdir -p /opt
 sudo chown "$USER":"$USER" /opt
 git clone git@github.com:malvoamadeus-png/DETECT.git /opt/DETECT
 cd /opt/DETECT
+bash scripts/linux/bootstrap-server.sh
 cp .env.example .env
 nano .env
 ```
@@ -129,6 +130,8 @@ After SSH access is ready, deploy from this local workspace:
 cd D:\Coding\DETECT
 .\scripts\deploy-linux.ps1 -HostName user@host
 ```
+
+By default this runs `scripts/linux/bootstrap-server.sh` on the server, which may use `sudo` to install `git`, `python3`, `python3-venv`, `python3-pip`, and CA certificates. Use `-SkipBootstrap` if the server is already prepared.
 
 If the server does not have `/opt/DETECT/.env` yet and you have confirmed the target machine is correct:
 

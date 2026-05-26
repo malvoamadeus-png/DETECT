@@ -60,6 +60,7 @@ The frontend is a read-only dashboard. On Vercel, set the root directory to `fro
 
 ```bash
 cd /opt/DETECT
+bash scripts/linux/bootstrap-server.sh
 bash scripts/linux/install-worker.sh
 sudo systemctl restart detect-worker.service
 bash scripts/linux/healthcheck-worker.sh

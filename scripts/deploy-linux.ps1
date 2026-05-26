@@ -7,6 +7,7 @@ param(
   [string]$ServiceName = "detect-worker",
   [string]$EnvPath = ".env",
   [switch]$UploadEnv,
+  [switch]$SkipBootstrap,
   [switch]$SkipRestart
 )
 
@@ -63,6 +64,17 @@ git pull --ff-only origin main
 export DETECT_APP_DIR='$AppDir'
 export DETECT_REPO_URL='$RepoUrl'
 export DETECT_SERVICE_NAME='$ServiceName'
+"@
+
+if (-not $SkipBootstrap) {
+  $remoteScript += @"
+
+bash scripts/linux/bootstrap-server.sh
+"@
+}
+
+$remoteScript += @"
+
 bash scripts/linux/install-worker.sh
 "@
 

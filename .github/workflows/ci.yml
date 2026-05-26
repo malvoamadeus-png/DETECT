@@ -32,7 +32,7 @@ jobs:
       - run: python -m pip install --upgrade pip
       - run: pip install -r backend/requirements.txt
       - run: python -m compileall backend
-      - run: bash -n scripts/linux/install-worker.sh scripts/linux/healthcheck-worker.sh scripts/linux/restart-worker.sh scripts/linux/logs-worker.sh
+      - run: bash -n scripts/linux/bootstrap-server.sh scripts/linux/install-worker.sh scripts/linux/healthcheck-worker.sh scripts/linux/restart-worker.sh scripts/linux/logs-worker.sh
 
   scripts:
     runs-on: windows-latest
