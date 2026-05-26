@@ -129,6 +129,12 @@ $env:GITHUB_TOKEN="..."
 .\scripts\trigger-ci.ps1 -Wait
 ```
 
+Check workflow visibility and whether the current branch head has a run, without a token:
+
+```powershell
+.\scripts\trigger-ci.ps1 -StatusOnly
+```
+
 Run the full local preflight:
 
 ```powershell

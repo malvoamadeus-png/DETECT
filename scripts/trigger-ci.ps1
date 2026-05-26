@@ -2,6 +2,7 @@ param(
   [string]$Repo = "malvoamadeus-png/DETECT",
   [string]$Ref = "main",
   [string]$Workflow = "ci.yml",
+  [switch]$StatusOnly,
   [switch]$Wait,
   [int]$TimeoutSeconds = 600
 )
@@ -35,6 +36,43 @@ function Invoke-GitHub {
     return Invoke-RestMethod -Method $Method -Headers $headers -Uri $Uri -TimeoutSec 30
   }
   return Invoke-RestMethod -Method $Method -Headers $headers -Uri $Uri -Body ($Body | ConvertTo-Json -Depth 10) -ContentType "application/json" -TimeoutSec 30
+}
+
+function Invoke-GitHubPublic {
+  param([string]$Uri)
+  $headers = @{
+    "Accept"     = "application/vnd.github+json"
+    "User-Agent" = "DETECT-ci-status"
+  }
+  return Invoke-RestMethod -Method "GET" -Headers $headers -Uri $Uri -TimeoutSec 30
+}
+
+function Show-CIStatus {
+  $repoUri = "https://api.github.com/repos/$Repo"
+  $workflowUri = "https://api.github.com/repos/$Repo/actions/workflows/$Workflow"
+  $branchUri = "https://api.github.com/repos/$Repo/branches/$Ref"
+  $runsUri = "https://api.github.com/repos/$Repo/actions/workflows/$Workflow/runs?branch=$Ref&per_page=10"
+
+  $repoPayload = Invoke-GitHubPublic -Uri $repoUri
+  $workflowPayload = Invoke-GitHubPublic -Uri $workflowUri
+  $branchPayload = Invoke-GitHubPublic -Uri $branchUri
+  $runsPayload = Invoke-GitHubPublic -Uri $runsUri
+  $headSha = [string]$branchPayload.commit.sha
+  $matchingRun = @($runsPayload.workflow_runs | Where-Object { $_.head_sha -eq $headSha } | Select-Object -First 1)
+
+  Write-Host "repo=$($repoPayload.full_name) default_branch=$($repoPayload.default_branch) disabled=$($repoPayload.disabled)"
+  Write-Host "workflow=$($workflowPayload.name) state=$($workflowPayload.state) path=$($workflowPayload.path)"
+  Write-Host "branch=$Ref head=$headSha"
+  if ($matchingRun) {
+    Write-Host "head_run=found status=$($matchingRun.status) conclusion=$($matchingRun.conclusion) url=$($matchingRun.html_url)"
+  } else {
+    Write-Host "head_run=missing no run found for $headSha"
+  }
+}
+
+if ($StatusOnly) {
+  Show-CIStatus
+  exit 0
 }
 
 $dispatchUri = "https://api.github.com/repos/$Repo/actions/workflows/$Workflow/dispatches"
