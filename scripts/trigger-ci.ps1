@@ -1,0 +1,67 @@
+param(
+  [string]$Repo = "malvoamadeus-png/DETECT",
+  [string]$Ref = "main",
+  [string]$Workflow = "ci.yml",
+  [switch]$Wait,
+  [int]$TimeoutSeconds = 600
+)
+
+$ErrorActionPreference = "Stop"
+
+function Get-GitHubToken {
+  $token = $env:GITHUB_TOKEN
+  if (-not $token) {
+    $token = $env:GH_TOKEN
+  }
+  if (-not $token) {
+    throw "Missing GITHUB_TOKEN or GH_TOKEN. Create a GitHub token with Actions write access, set it in the environment, then rerun."
+  }
+  return $token
+}
+
+function Invoke-GitHub {
+  param(
+    [string]$Method,
+    [string]$Uri,
+    [object]$Body = $null
+  )
+  $headers = @{
+    "Accept"               = "application/vnd.github+json"
+    "Authorization"        = "Bearer $(Get-GitHubToken)"
+    "X-GitHub-Api-Version" = "2022-11-28"
+    "User-Agent"           = "DETECT-ci-trigger"
+  }
+  if ($null -eq $Body) {
+    return Invoke-RestMethod -Method $Method -Headers $headers -Uri $Uri -TimeoutSec 30
+  }
+  return Invoke-RestMethod -Method $Method -Headers $headers -Uri $Uri -Body ($Body | ConvertTo-Json -Depth 10) -ContentType "application/json" -TimeoutSec 30
+}
+
+$dispatchUri = "https://api.github.com/repos/$Repo/actions/workflows/$Workflow/dispatches"
+Invoke-GitHub -Method "POST" -Uri $dispatchUri -Body @{ ref = $Ref }
+Write-Host "ci_dispatch=ok repo=$Repo workflow=$Workflow ref=$Ref"
+
+if (-not $Wait) {
+  exit 0
+}
+
+$deadline = (Get-Date).AddSeconds($TimeoutSeconds)
+$runsUri = "https://api.github.com/repos/$Repo/actions/workflows/$Workflow/runs?branch=$Ref&event=workflow_dispatch&per_page=5"
+do {
+  Start-Sleep -Seconds 10
+  $runs = Invoke-GitHub -Method "GET" -Uri $runsUri
+  $run = @($runs.workflow_runs | Sort-Object created_at -Descending | Select-Object -First 1)
+  if ($run) {
+    Write-Host "ci_run status=$($run.status) conclusion=$($run.conclusion) url=$($run.html_url)"
+    if ($run.status -eq "completed") {
+      if ($run.conclusion -ne "success") {
+        throw "CI completed with conclusion=$($run.conclusion)"
+      }
+      exit 0
+    }
+  } else {
+    Write-Host "ci_run=waiting"
+  }
+} while ((Get-Date) -lt $deadline)
+
+throw "Timed out waiting for CI workflow_dispatch run."

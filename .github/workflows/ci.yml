@@ -58,6 +58,7 @@ jobs:
             "scripts/run-once.ps1",
             "scripts/run-worker.ps1",
             "scripts/smoke-vercel.ps1",
+            "scripts/trigger-ci.ps1",
             "scripts/verify-local.ps1"
           )
           foreach ($script in $scripts) {

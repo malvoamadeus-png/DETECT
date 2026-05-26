@@ -115,6 +115,13 @@ Check deployment readiness:
 
 If GitHub does not create checks for a pushed commit, open the repository Actions tab and run the `CI` workflow manually. The workflow has a `workflow_dispatch` trigger for this fallback path.
 
+With a token that has Actions write access, the same fallback can be triggered from PowerShell without printing the token:
+
+```powershell
+$env:GITHUB_TOKEN="..."
+.\scripts\trigger-ci.ps1 -Wait
+```
+
 Run the full local preflight:
 
 ```powershell

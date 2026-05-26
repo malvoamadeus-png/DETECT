@@ -21,6 +21,13 @@ Run the local preflight suite before cutting a deployment:
 
 If a push does not produce GitHub checks, open the repository Actions tab and manually run the `CI` workflow. The workflow includes `workflow_dispatch` for this fallback.
 
+If you have a GitHub token with Actions write access:
+
+```powershell
+$env:GITHUB_TOKEN="..."
+.\scripts\trigger-ci.ps1 -Wait
+```
+
 Optional target checks:
 
 ```powershell
