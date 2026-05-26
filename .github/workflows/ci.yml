@@ -142,6 +142,30 @@ jobs:
       - name: Validate Vercel env sync dry-run
         shell: pwsh
         run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/sync-vercel-env.ps1 -EnvPath .env.example -DryRun -AllowPlaceholders
+      - name: Validate full deploy dry-run
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path ".tmp" | Out-Null
+          "SUPABASE_DB_URL=postgres://user.projref@host.example/db" | Set-Content -LiteralPath ".tmp/full-deploy.env" -Encoding utf8
+          $fullDeployDryRun = powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/deploy-full.ps1 -SkipLocalPreflight -SkipReadiness -SkipVercelEnvCheck -SkipVercelSmoke -SkipVercelCliCheck -SshHost "dry-run@example" -SyncVercelEnv -DeployVercel -DryRun -VercelEnvSourcePath ".tmp/full-deploy.env" 2>&1
+          if ($LASTEXITCODE -ne 0) {
+            throw "deploy-full dry-run failed"
+          }
+          $fullDeployText = ($fullDeployDryRun -join "`n")
+          $requiredFullDeployFragments = @(
+            "vercel_env_plan key=SUPABASE_DB_URL action=upsert",
+            "vercel_deploy=dry_run",
+            "DETECT_HEALTH_MIN_DASHBOARD_ROWS=0 bash scripts/linux/healthcheck-worker.sh"
+          )
+          foreach ($fragment in $requiredFullDeployFragments) {
+            if ($fullDeployText -notlike "*$fragment*") {
+              throw "deploy-full dry-run is missing: $fragment"
+            }
+          }
+          if ($fullDeployText -like "*vercel deploy --prebuilt*") {
+            throw "deploy-full dry-run should not invoke a real Vercel deploy."
+          }
+          Write-Host "deploy-full dry-run ok"
       - name: Validate worker env template
         shell: pwsh
         run: |

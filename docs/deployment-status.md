@@ -25,7 +25,7 @@ Last audited: 2026-05-26 Asia/Shanghai
 - Vercel env sync helper exists to upsert `SUPABASE_DB_URL` from local `.env` through the Vercel CLI without printing secret values.
 - Readiness checks support strict production gating with explicit skips for known external constraints.
 - Final deployment orchestrator exists for local preflight, readiness, optional Vercel env sync, optional Vercel deploy, worker deploy, worker smoke testing, and frontend smoke testing once external targets are known.
-- Final deployment orchestrator dry-run covers Vercel env sync intent, Vercel deploy intent, and Linux worker deploy commands without changing external services.
+- Final deployment orchestrator dry-run covers Vercel env sync intent, Vercel deploy intent, and Linux worker deploy commands without changing external services; this is covered by local preflight and GitHub Actions.
 - Linux worker deploy dry-run and upload-env dry-run are covered by local verification and wired into GitHub Actions, including first-server bootstrap before clone and safe temp-file env upload before installing `/opt/DETECT/.env`.
 - Backend unit tests cover Bankr launch parsing, X identity resolution priority/fallbacks, GitHub URL discovery/scoring/API aggregation, X cursor pagination, tweet dedupe, author filtering, 50-post defaults, configured target persistence, OpenAI analysis fallback behavior, and redacted environment diagnostics including X pagination env reporting.
 - Frontend API limit checks cover `/api/dashboard?limit=` bounds for invalid, negative, decimal, default, and oversized values.
