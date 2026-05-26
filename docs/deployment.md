@@ -34,6 +34,8 @@ Optional target checks:
 .\scripts\check-deploy-ready.ps1 -VercelBaseUrl https://<your-vercel-domain> -SshHost user@host
 ```
 
+Use `-Strict` for production gates. If GitHub checks are unavailable but local preflight has passed and you intentionally want to proceed, add `-SkipGitHubActionsCheck`. If Vercel is managed through the dashboard rather than local CLI, add `-SkipVercelCliCheck`.
+
 ## Linux Worker
 
 Suggested path:

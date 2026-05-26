@@ -114,6 +114,12 @@ Check deployment readiness:
 .\scripts\check-deploy-ready.ps1
 ```
 
+Use strict mode before production deployment:
+
+```powershell
+.\scripts\check-deploy-ready.ps1 -Strict -SkipGitHubActionsCheck -SkipVercelCliCheck
+```
+
 If GitHub does not create checks for a pushed commit, open the repository Actions tab and run the `CI` workflow manually. The workflow has a `workflow_dispatch` trigger for this fallback path.
 
 With a token that has Actions write access, the same fallback can be triggered from PowerShell without printing the token:

@@ -19,6 +19,7 @@ Last audited: 2026-05-26 Asia/Shanghai
 - Linux worker install, restart, health, log, and bootstrap scripts exist.
 - Linux worker server-side preflight script exists for read-only diagnostics before/after install.
 - Windows helper scripts exist for Linux worker deploy, Vercel deploy, readiness checks, smoke tests, and local preflight.
+- Readiness checks support strict production gating with explicit skips for known external constraints.
 - Final deployment orchestrator exists for local preflight, readiness, worker deploy, and frontend smoke testing once external targets are known.
 - Linux worker deploy dry-run is covered by local verification and is wired into GitHub Actions, including first-server bootstrap before clone.
 - Backend unit tests cover X cursor pagination, tweet dedupe, author filtering, 50-post defaults, configured target persistence, OpenAI analysis fallback behavior, and redacted environment diagnostics.

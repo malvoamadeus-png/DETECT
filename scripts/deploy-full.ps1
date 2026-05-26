@@ -7,6 +7,8 @@ param(
   [switch]$UploadWorkerEnv,
   [switch]$SkipLocalPreflight,
   [switch]$SkipReadiness,
+  [switch]$SkipGitHubActionsCheck,
+  [switch]$SkipVercelCliCheck,
   [switch]$SkipWorkerDeploy,
   [switch]$SkipVercelEnvCheck,
   [switch]$SkipVercelSmoke,
@@ -38,7 +40,13 @@ try {
 
   if (-not $SkipReadiness) {
     Invoke-Step "deployment readiness" {
-      $args = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", (Join-Path $root "scripts/check-deploy-ready.ps1"))
+      $args = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", (Join-Path $root "scripts/check-deploy-ready.ps1"), "-Strict")
+      if ($SkipGitHubActionsCheck) {
+        $args += "-SkipGitHubActionsCheck"
+      }
+      if ($SkipVercelCliCheck) {
+        $args += "-SkipVercelCliCheck"
+      }
       if ($VercelBaseUrl) {
         $args += @("-VercelBaseUrl", $VercelBaseUrl)
       }

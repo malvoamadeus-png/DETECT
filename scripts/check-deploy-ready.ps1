@@ -1,11 +1,15 @@
 param(
   [string]$VercelBaseUrl = "",
   [string]$SshHost = "",
-  [string]$GitHubRepo = "malvoamadeus-png/DETECT"
+  [string]$GitHubRepo = "malvoamadeus-png/DETECT",
+  [switch]$Strict,
+  [switch]$SkipGitHubActionsCheck,
+  [switch]$SkipVercelCliCheck
 )
 
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
+$script:failedChecks = @()
 
 function Write-Check {
   param(
@@ -14,6 +18,9 @@ function Write-Check {
     [string]$Detail = ""
   )
   $status = if ($Ok) { "ok" } else { "missing" }
+  if (-not $Ok) {
+    $script:failedChecks += $Name
+  }
   if ($Detail) {
     Write-Host "$Name=$status $Detail"
   } else {
@@ -82,16 +89,28 @@ try {
   $headSha = (git rev-parse HEAD).Trim()
   Write-Check "head_matches_origin_main" ($headSha -eq $originSha) "head=$($headSha.Substring(0, 7)) origin=$($originSha.Substring(0, 7))"
   Test-WorkflowFile -Path (Join-Path $root ".github/workflows/ci.yml")
-  Test-GitHubActions -Repo $GitHubRepo -ExpectedSha $originSha
+  if ($SkipGitHubActionsCheck) {
+    Write-Host "github_actions=skipped by flag"
+  } else {
+    Test-GitHubActions -Repo $GitHubRepo -ExpectedSha $originSha
+  }
 
   Write-Host "== local tools =="
   Write-Check "ssh" (Test-Command "ssh")
   Write-Check "scp" (Test-Command "scp")
-  Write-Check "vercel_cli" (Test-Command "vercel") "required for scripts/deploy-vercel.ps1"
+  if ($SkipVercelCliCheck) {
+    Write-Host "vercel_cli=skipped by flag"
+  } else {
+    Write-Check "vercel_cli" (Test-Command "vercel") "required for scripts/deploy-vercel.ps1"
+  }
 
   Write-Host "== vercel =="
-  $vercelLink = Test-Path -LiteralPath (Join-Path $root "frontend/.vercel/project.json")
-  Write-Check "vercel_link" $vercelLink "frontend/.vercel/project.json"
+  if ($SkipVercelCliCheck) {
+    Write-Host "vercel_link=skipped by flag"
+  } else {
+    $vercelLink = Test-Path -LiteralPath (Join-Path $root "frontend/.vercel/project.json")
+    Write-Check "vercel_link" $vercelLink "frontend/.vercel/project.json"
+  }
   if ($VercelBaseUrl) {
     & (Join-Path $root "scripts/smoke-vercel.ps1") -BaseUrl $VercelBaseUrl
   } else {
@@ -134,6 +153,10 @@ try {
     }
   } else {
     Write-Host "ssh_target=skipped pass -SshHost user@host to test worker target"
+  }
+
+  if ($Strict -and $script:failedChecks.Count) {
+    throw "Readiness strict mode failed checks: $($script:failedChecks -join ', ')"
   }
 } finally {
   Pop-Location
