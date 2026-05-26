@@ -98,6 +98,9 @@ class GitHubClient:
             contributors = []
         if not isinstance(releases, list):
             releases = []
+        topics = repo_payload.get("topics")
+        if not isinstance(topics, list):
+            topics = []
         score_breakdown = score_repo(repo_payload, contributors, releases)
         score = min(100, sum(score_breakdown.values()))
         license_payload = repo_payload.get("license") if isinstance(repo_payload.get("license"), dict) else {}
@@ -116,7 +119,7 @@ class GitHubClient:
             pushed_at=str(repo_payload.get("pushed_at") or ""),
             created_at=str(repo_payload.get("created_at") or ""),
             license_spdx=str(license_payload.get("spdx_id") or ""),
-            topics=list(repo_payload.get("topics") or []),
+            topics=[str(topic) for topic in topics],
             languages={str(k): int(v) for k, v in languages.items()},
             contributors=[
                 {"login": item.get("login"), "contributions": item.get("contributions")}
@@ -199,4 +202,3 @@ def score_repo(repo: dict[str, Any], contributors: list[Any], releases: list[Any
         "collaboration": collaboration,
         "completeness": completeness,
     }
-

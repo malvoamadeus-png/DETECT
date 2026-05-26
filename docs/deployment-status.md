@@ -22,7 +22,7 @@ Last audited: 2026-05-26 Asia/Shanghai
 - Readiness checks support strict production gating with explicit skips for known external constraints.
 - Final deployment orchestrator exists for local preflight, readiness, worker deploy, and frontend smoke testing once external targets are known.
 - Linux worker deploy dry-run is covered by local verification and is wired into GitHub Actions, including first-server bootstrap before clone.
-- Backend unit tests cover Bankr launch parsing, X identity resolution priority/fallbacks, X cursor pagination, tweet dedupe, author filtering, 50-post defaults, configured target persistence, OpenAI analysis fallback behavior, and redacted environment diagnostics.
+- Backend unit tests cover Bankr launch parsing, X identity resolution priority/fallbacks, GitHub URL discovery/scoring/API aggregation, X cursor pagination, tweet dedupe, author filtering, 50-post defaults, configured target persistence, OpenAI analysis fallback behavior, and redacted environment diagnostics.
 - Real `.env` remains ignored and is not committed.
 
 ## Current External Blockers
