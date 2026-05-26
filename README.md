@@ -67,6 +67,12 @@ bash scripts/linux/healthcheck-worker.sh
 
 Create `/opt/DETECT/.env` from `.env.example` before starting the service. Do not commit the real `.env`.
 
+From Windows, once SSH is available:
+
+```powershell
+.\scripts\deploy-linux.ps1 -HostName user@host
+```
+
 ## Supabase Env Alignment
 
 `SUPABASE_DB_URL`, `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SUPABASE_URL`, and `NEXT_PUBLIC_SUPABASE_ANON_KEY` must point to the same Supabase project. If the backend migration succeeds but the frontend says `detect_dashboard` is missing from the schema cache, the usual cause is a DB URL for one project and an anon URL/key for another project.

@@ -95,6 +95,23 @@ cd /opt/DETECT
 bash scripts/linux/healthcheck-worker.sh
 ```
 
+## Remote Deploy From Windows
+
+After SSH access is ready, deploy from this local workspace:
+
+```powershell
+cd D:\Coding\DETECT
+.\scripts\deploy-linux.ps1 -HostName user@host
+```
+
+If the server does not have `/opt/DETECT/.env` yet and you have confirmed the target machine is correct:
+
+```powershell
+.\scripts\deploy-linux.ps1 -HostName user@host -UploadEnv -EnvPath .env
+```
+
+`-UploadEnv` copies the local `.env` to the server. Use it only for the intended production server.
+
 ## Vercel
 
 Project settings:
