@@ -5,11 +5,12 @@ Last audited: 2026-05-26 Asia/Shanghai
 ## Proven Complete
 
 - Code is pushed to GitHub remote `git@github.com:malvoamadeus-png/DETECT.git`.
-- Latest runtime/code audit before this status note was commit `7386e3c`.
+- Latest runtime/code audit before this status note was commit `6792746`.
 - Local preflight passes for runtime-audited commit `7386e3c`, including 29 backend tests, worker deploy dry-runs, CI checkout probe, backend environment check, tracked-file secret scan, frontend lint/typecheck, dashboard API limit checks, dashboard API error-response checks, server DB config checks, and frontend production build.
-- Strict readiness passes for runtime-audited commit `7386e3c` with GitHub Actions verified and Vercel CLI / real target checks intentionally skipped until external targets are available.
+- Strict readiness also passes for current head `6792746` with GitHub Actions verified and Vercel CLI / real target checks intentionally skipped until external targets are available.
 - GitHub Actions has `push`, `pull_request`, and `workflow_dispatch` triggers. The workflow has been hardened with explicit `contents: read` permission, manual HTTPS checkout, and Ubuntu-compatible PowerShell script calls.
 - GitHub Actions is green for commit `7386e3c`: `https://github.com/malvoamadeus-png/DETECT/actions/runs/26451705556`.
+- GitHub Actions is green for current head `6792746`: `https://github.com/malvoamadeus-png/DETECT/actions/runs/26452197432`.
 - Supabase migrations have been applied locally through the backend migration command.
 - Supabase migration structure is covered by local preflight and CI wiring.
 - Backend worker can run a real analysis pass and has produced dashboard rows in Supabase.
@@ -19,6 +20,7 @@ Last audited: 2026-05-26 Asia/Shanghai
 - Frontend server API can read the same Postgres database through `SUPABASE_DB_URL`; the server-side Postgres client uses SSL plus explicit connection/query/statement timeouts.
 - Vercel env template and preflight checker exist for `SUPABASE_DB_URL` without printing secrets.
 - Current local env has usable `OPENAI_API_KEY`, `OPENAI_BASE_URL`, and `SUPABASE_DB_URL`. Public Supabase URL/key are present but appear to reference a different project from `SUPABASE_DB_URL`, so the first production frontend path should keep using `/api/dashboard` backed by `SUPABASE_DB_URL`.
+- Current backend env check succeeds without exposing secrets; `OPENAI_MODEL` is unset locally and therefore falls back to the code default model configured in `backend/packages/account_analyzer/analyzer.py`.
 - Tracked-file secret scan is part of local preflight and CI wiring.
 - Local smoke test against the dashboard API has returned real data.
 - Linux worker install, restart, health, log, and bootstrap scripts exist.
@@ -38,7 +40,7 @@ Last audited: 2026-05-26 Asia/Shanghai
 ## Current External Blockers
 
 - Linux worker is not deployed to a real server because no SSH target has been provided.
-- Vercel production is not verified because Vercel CLI is not installed locally and `frontend/.vercel/project.json` is not linked.
+- Vercel production is not verified because the project has not been bound and no deployed URL is available yet. Local Vercel CLI linkage is optional if the dashboard workflow is used instead.
 - Public deployed URL is not available yet, so production smoke test cannot be run.
 
 ## Required To Finish Deployment
