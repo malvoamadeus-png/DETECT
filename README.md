@@ -99,6 +99,8 @@ Check deployment readiness:
 .\scripts\check-deploy-ready.ps1
 ```
 
+If GitHub does not create checks for a pushed commit, open the repository Actions tab and run the `CI` workflow manually. The workflow has a `workflow_dispatch` trigger for this fallback path.
+
 Run the full local preflight:
 
 ```powershell

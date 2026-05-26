@@ -47,6 +47,30 @@ function Test-GitHubActions {
   }
 }
 
+function Test-WorkflowFile {
+  param([string]$Path)
+  if (-not (Test-Path -LiteralPath $Path)) {
+    Write-Check "github_workflow_file" $false $Path
+    return
+  }
+  $content = Get-Content -LiteralPath $Path -Raw
+  $requiredFragments = @(
+    "push:",
+    "pull_request:",
+    "workflow_dispatch:",
+    "npm run build",
+    "python -m pytest backend/tests",
+    "Validate Linux deploy dry-run"
+  )
+  foreach ($fragment in $requiredFragments) {
+    if ($content -notlike "*$fragment*") {
+      Write-Check "github_workflow_file" $false "missing '$fragment'"
+      return
+    }
+  }
+  Write-Check "github_workflow_file" $true $Path
+}
+
 Push-Location $root
 try {
   Write-Host "== repository =="
@@ -57,6 +81,7 @@ try {
   $originSha = (git rev-parse origin/main).Trim()
   $headSha = (git rev-parse HEAD).Trim()
   Write-Check "head_matches_origin_main" ($headSha -eq $originSha) "head=$($headSha.Substring(0, 7)) origin=$($originSha.Substring(0, 7))"
+  Test-WorkflowFile -Path (Join-Path $root ".github/workflows/ci.yml")
   Test-GitHubActions -Repo $GitHubRepo -ExpectedSha $originSha
 
   Write-Host "== local tools =="

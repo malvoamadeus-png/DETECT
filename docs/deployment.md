@@ -19,6 +19,8 @@ Run the local preflight suite before cutting a deployment:
 .\scripts\verify-local.ps1
 ```
 
+If a push does not produce GitHub checks, open the repository Actions tab and manually run the `CI` workflow. The workflow includes `workflow_dispatch` for this fallback.
+
 Optional target checks:
 
 ```powershell
