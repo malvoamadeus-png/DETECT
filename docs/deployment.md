@@ -172,6 +172,12 @@ Preview the generated remote commands before connecting:
 .\scripts\deploy-linux.ps1 -HostName user@host -DryRun
 ```
 
+Preview the full deployment orchestrator, including Vercel env/deploy intent, without changing external services:
+
+```powershell
+.\scripts\deploy-full.ps1 -SshHost user@host -SyncVercelEnv -DeployVercel -DryRun
+```
+
 If the server does not have `/opt/DETECT/.env` yet and you have confirmed the target machine is correct:
 
 ```powershell
@@ -194,7 +200,7 @@ Once the worker host and public Vercel URL are both known, run the final orchest
 .\scripts\deploy-full.ps1 -SshHost user@host -VercelBaseUrl https://<your-vercel-domain>
 ```
 
-This runs local preflight, readiness checks, optional Vercel env validation, Linux worker deploy, worker smoke testing, and frontend smoke testing. Use `-DryRun` to preview the worker deployment portion.
+This runs local preflight, readiness checks, optional Vercel env validation, Linux worker deploy, worker smoke testing, and frontend smoke testing. Use `-DryRun` to preview worker deployment, Vercel env sync, and Vercel deploy intent without changing external services.
 
 If Vercel CLI is installed, authenticated, and linked to the project, the orchestrator can also sync production env and deploy the frontend:
 

@@ -102,6 +102,12 @@ Preview the generated remote deployment script without connecting:
 .\scripts\deploy-linux.ps1 -HostName user@host -DryRun
 ```
 
+Preview the full orchestrator, including Vercel env/deploy intent, without changing external services:
+
+```powershell
+.\scripts\deploy-full.ps1 -SshHost user@host -SyncVercelEnv -DeployVercel -DryRun
+```
+
 After Vercel deploys, verify the public app:
 
 ```powershell

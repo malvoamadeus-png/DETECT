@@ -172,6 +172,27 @@ DATABASE_URL=postgres://user.projref@host.example/db
   }
   Write-Host "deploy_linux_upload_env_dry_run=ok"
 
+  Write-Host "== Full deploy dry-run =="
+  $fullDeployDryRun = powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root "scripts/deploy-full.ps1") -SkipLocalPreflight -SkipReadiness -SkipVercelEnvCheck -SkipVercelSmoke -SkipVercelCliCheck -SshHost "dry-run@example" -SyncVercelEnv -DeployVercel -DryRun 2>&1
+  if ($LASTEXITCODE -ne 0) {
+    throw "deploy-full dry-run failed"
+  }
+  $fullDeployText = ($fullDeployDryRun -join "`n")
+  $requiredFullDeployFragments = @(
+    "vercel_env_plan key=SUPABASE_DB_URL action=upsert",
+    "vercel_deploy=dry_run",
+    "DETECT_HEALTH_MIN_DASHBOARD_ROWS=0 bash scripts/linux/healthcheck-worker.sh"
+  )
+  foreach ($fragment in $requiredFullDeployFragments) {
+    if ($fullDeployText -notlike "*$fragment*") {
+      throw "deploy-full dry-run is missing: $fragment"
+    }
+  }
+  if ($fullDeployText -like "*vercel deploy --prebuilt*") {
+    throw "deploy-full dry-run should not invoke a real Vercel deploy."
+  }
+  Write-Host "deploy_full_dry_run=ok"
+
   Write-Host "== Vercel env template =="
   powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root "scripts/check-vercel-env.ps1") -EnvPath "frontend/.env.production.example" -AllowPlaceholders
   if ($LASTEXITCODE -ne 0) {

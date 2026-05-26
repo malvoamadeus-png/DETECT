@@ -77,7 +77,19 @@ try {
 
   if ($SyncVercelEnv) {
     Invoke-Step "Vercel env sync" {
-      powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root "scripts/sync-vercel-env.ps1") -EnvPath $VercelEnvSourcePath
+      $args = @(
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        (Join-Path $root "scripts/sync-vercel-env.ps1"),
+        "-EnvPath",
+        $VercelEnvSourcePath
+      )
+      if ($DryRun) {
+        $args += "-DryRun"
+      }
+      powershell.exe @args
       if ($LASTEXITCODE -ne 0) {
         throw "Vercel env sync failed."
       }
@@ -86,6 +98,10 @@ try {
 
   if ($DeployVercel) {
     Invoke-Step "Vercel deploy" {
+      if ($DryRun) {
+        Write-Host "vercel_deploy=dry_run"
+        return
+      }
       $args = @(
         "-NoProfile",
         "-ExecutionPolicy",
