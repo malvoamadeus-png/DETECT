@@ -43,6 +43,7 @@ jobs:
         run: |
           $scripts = @(
             "scripts/deploy-linux.ps1",
+            "scripts/deploy-vercel.ps1",
             "scripts/run-frontend.ps1",
             "scripts/run-once.ps1",
             "scripts/run-worker.ps1",

@@ -150,6 +150,15 @@ cd D:\Coding\DETECT
 .\scripts\smoke-vercel.ps1 -BaseUrl https://<your-vercel-domain>
 ```
 
+If Vercel CLI is installed and this project has been linked locally:
+
+```powershell
+cd D:\Coding\DETECT
+.\scripts\deploy-vercel.ps1
+```
+
+The script runs `vercel pull`, `vercel build --prod`, `vercel deploy --prebuilt --prod`, then runs the smoke test against the deployed URL.
+
 Optional fallback variables:
 
 ```text
