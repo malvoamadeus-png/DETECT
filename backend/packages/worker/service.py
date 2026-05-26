@@ -51,6 +51,7 @@ def run_once(*, limit: int | None = None) -> WorkerStats:
                     identity=identity,
                     profile=profile,
                     posts=posts,
+                    target_tweets=target_tweets,
                     fetch_meta=fetch_meta,
                     stage="x_fetched",
                 )
@@ -104,4 +105,3 @@ def run_worker() -> None:
             print(f"[detect-worker] run failed: {exc}", flush=True)
         elapsed = time.time() - started
         time.sleep(max(1.0, poll_seconds - elapsed))
-

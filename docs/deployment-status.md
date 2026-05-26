@@ -5,10 +5,11 @@ Last audited: 2026-05-26 Asia/Shanghai
 ## Proven Complete
 
 - Code is pushed to GitHub remote `git@github.com:malvoamadeus-png/DETECT.git`.
-- Local `main` and `origin/main` are aligned at commit `6554fea`.
-- Local preflight passes at `6554fea`, including backend tests, worker deploy dry-run, backend environment check, and frontend production build.
+- Local `main` and `origin/main` are aligned at the latest pushed commit.
+- Local preflight passes at the latest pushed commit, including backend tests, worker deploy dry-run, backend environment check, and frontend production build.
 - GitHub Actions has `push`, `pull_request`, and `workflow_dispatch` triggers, but the latest pushed commits after `83189ec` are currently waiting for checks information on GitHub. Run the `CI` workflow manually from the Actions tab if automatic checks do not start.
 - Supabase migrations have been applied locally through the backend migration command.
+- Supabase migration structure is covered by local preflight and CI wiring.
 - Backend worker can run a real analysis pass and has produced dashboard rows in Supabase.
 - Frontend production build succeeds and includes `/api/dashboard` and `/api/health`.
 - Frontend server API can read the same Postgres database through `SUPABASE_DB_URL`.
@@ -18,6 +19,7 @@ Last audited: 2026-05-26 Asia/Shanghai
 - Windows helper scripts exist for Linux worker deploy, Vercel deploy, readiness checks, smoke tests, and local preflight.
 - Final deployment orchestrator exists for local preflight, readiness, worker deploy, and frontend smoke testing once external targets are known.
 - Linux worker deploy dry-run is covered by local verification and is wired into GitHub Actions, including first-server bootstrap before clone.
+- Backend unit tests cover X cursor pagination, tweet dedupe, author filtering, 50-post defaults, and configured target persistence.
 - Real `.env` remains ignored and is not committed.
 
 ## Current External Blockers

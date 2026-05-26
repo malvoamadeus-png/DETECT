@@ -109,6 +109,7 @@ class DetectRepository:
         identity: XIdentity,
         profile: XProfile | None,
         posts: list[XPost],
+        target_tweets: int,
         fetch_meta: dict[str, Any],
         stage: Stage,
     ) -> str:
@@ -133,7 +134,7 @@ class DetectRepository:
               website_url, avatar_url, banner_url, joined_raw, x_posts_collected,
               x_posts_target, x_fetch_meta_json, interaction_json, processing_stage, updated_at
             )
-            VALUES (%s, %s, lower(%s), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 50, %s, %s, %s, now())
+            VALUES (%s, %s, lower(%s), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now())
             ON CONFLICT(launch_id, username_lower) DO UPDATE SET
               identity_source = EXCLUDED.identity_source,
               identity_confidence = EXCLUDED.identity_confidence,
@@ -171,6 +172,7 @@ class DetectRepository:
                 profile.banner_url,
                 profile.joined,
                 len(posts),
+                target_tweets,
                 jsonb(fetch_meta),
                 jsonb(interaction_summary(posts)),
                 stage,

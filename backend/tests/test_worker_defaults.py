@@ -21,6 +21,8 @@ class FakeGitHubClient:
 
 
 class FakeRepo:
+    upsert_account_calls: list[dict[str, Any]] = []
+
     def __init__(self, _conn: object) -> None:
         self.account_stage: list[str] = []
 
@@ -30,7 +32,8 @@ class FakeRepo:
     def set_launch_stage(self, launch_id: int, stage: str, message: str = "") -> None:
         pass
 
-    def upsert_account(self, **_: Any) -> int:
+    def upsert_account(self, **kwargs: Any) -> int:
+        self.upsert_account_calls.append(kwargs)
         return 10
 
     def set_account_stage(self, account_id: int, stage: str, message: str = "") -> None:
@@ -72,6 +75,7 @@ def _launch() -> LaunchRecord:
 
 def test_run_once_defaults_to_50_target_tweets_and_10_x_pages(monkeypatch) -> None:
     FakeFXTwitterClient.fetch_calls = []
+    FakeRepo.upsert_account_calls = []
 
     monkeypatch.delenv("DETECT_TARGET_TWEETS", raising=False)
     monkeypatch.delenv("DETECT_MAX_X_PAGES", raising=False)
@@ -101,6 +105,39 @@ def test_run_once_defaults_to_50_target_tweets_and_10_x_pages(monkeypatch) -> No
     assert FakeFXTwitterClient.fetch_calls == [
         {"username": "Target", "target_tweets": 50, "max_pages": 10}
     ]
+    assert FakeRepo.upsert_account_calls[0]["target_tweets"] == 50
+
+
+def test_run_once_persists_configured_target_tweets(monkeypatch) -> None:
+    FakeFXTwitterClient.fetch_calls = []
+    FakeRepo.upsert_account_calls = []
+
+    monkeypatch.setenv("DETECT_TARGET_TWEETS", "37")
+    monkeypatch.setenv("DETECT_MAX_X_PAGES", "4")
+    monkeypatch.setattr(worker_service, "fetch_latest_launches", lambda: [_launch()])
+    monkeypatch.setattr(worker_service, "postgres_connection", lambda: FakeConnection())
+    monkeypatch.setattr(worker_service, "DetectRepository", FakeRepo)
+    monkeypatch.setattr(worker_service, "FXTwitterClient", FakeFXTwitterClient)
+    monkeypatch.setattr(worker_service, "GitHubClient", FakeGitHubClient)
+    monkeypatch.setattr(worker_service, "discover_github_candidates", lambda **_: [])
+    monkeypatch.setattr(
+        worker_service,
+        "resolve_launch_identity",
+        lambda launch, x_client: XIdentity(
+            username="Target",
+            source="test",
+            profile_url="https://x.com/Target",
+            confidence=90,
+        ),
+    )
+    monkeypatch.setattr(worker_service, "analyze_account", lambda **_: object())
+
+    worker_service.run_once(limit=1)
+
+    assert FakeFXTwitterClient.fetch_calls == [
+        {"username": "Target", "target_tweets": 37, "max_pages": 4}
+    ]
+    assert FakeRepo.upsert_account_calls[0]["target_tweets"] == 37
 
 
 def test_run_worker_defaults_to_20_second_poll(monkeypatch) -> None:

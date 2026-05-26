@@ -34,6 +34,8 @@ jobs:
       - run: pip install -r backend/requirements.txt
       - run: python -m compileall backend
       - run: python -m pytest backend/tests
+      - shell: pwsh
+        run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/check-migrations.ps1
       - run: bash -n scripts/linux/bootstrap-server.sh scripts/linux/install-worker.sh scripts/linux/healthcheck-worker.sh scripts/linux/restart-worker.sh scripts/linux/logs-worker.sh
 
   scripts:
@@ -45,6 +47,7 @@ jobs:
         run: |
           $scripts = @(
             "scripts/check-deploy-ready.ps1",
+            "scripts/check-migrations.ps1",
             "scripts/check-vercel-env.ps1",
             "scripts/deploy-full.ps1",
             "scripts/deploy-linux.ps1",

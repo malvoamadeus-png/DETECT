@@ -55,6 +55,12 @@ try {
     throw "Vercel env template check failed"
   }
 
+  Write-Host "== Supabase migrations =="
+  powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root "scripts/check-migrations.ps1")
+  if ($LASTEXITCODE -ne 0) {
+    throw "Supabase migration check failed"
+  }
+
   Write-Host "== Python compile =="
   python -m compileall backend
   if ($LASTEXITCODE -ne 0) {
