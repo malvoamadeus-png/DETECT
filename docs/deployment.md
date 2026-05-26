@@ -143,6 +143,13 @@ Expected shape:
 {"ok":true,"dashboard_rows":1}
 ```
 
+Run the smoke test from Windows:
+
+```powershell
+cd D:\Coding\DETECT
+.\scripts\smoke-vercel.ps1 -BaseUrl https://<your-vercel-domain>
+```
+
 Optional fallback variables:
 
 ```text
