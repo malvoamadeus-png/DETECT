@@ -105,6 +105,7 @@ try {
   $scripts = @(
     "scripts/check-deploy-ready.ps1",
     "scripts/check-migrations.ps1",
+    "scripts/check-secrets.ps1",
     "scripts/check-vercel-env.ps1",
     "scripts/deploy-full.ps1",
     "scripts/deploy-linux.ps1",

@@ -102,13 +102,13 @@ def test_analyze_account_uses_heuristic_without_openai_env(monkeypatch) -> None:
 
 
 def test_analyze_account_normalizes_successful_model_response(monkeypatch) -> None:
-    monkeypatch.setenv("OPENAI_API_KEY", "test-key")
+    monkeypatch.setenv("OPENAI_API_KEY", "x")
     monkeypatch.setenv("OPENAI_BASE_URL", "https://openai.example/v1/")
     monkeypatch.setenv("OPENAI_MODEL", "gpt-5.4-mini")
 
     def fake_post(*args: Any, **kwargs: Any) -> FakeResponse:
         assert args[0] == "https://openai.example/v1/chat/completions"
-        assert kwargs["headers"]["Authorization"] == "Bearer test-key"
+        assert kwargs["headers"]["Authorization"] == "Bearer x"
         return FakeResponse(
             {
                 "model": "gpt-5.4-mini",
@@ -155,7 +155,7 @@ def test_analyze_account_normalizes_successful_model_response(monkeypatch) -> No
     ],
 )
 def test_analyze_account_falls_back_on_model_errors(monkeypatch, payload: dict[str, Any], status_error: Exception | None) -> None:
-    monkeypatch.setenv("OPENAI_API_KEY", "test-key")
+    monkeypatch.setenv("OPENAI_API_KEY", "x")
     monkeypatch.setenv("OPENAI_BASE_URL", "https://openai.example/v1")
 
     def fake_post(*args: Any, **kwargs: Any) -> FakeResponse:

@@ -61,6 +61,12 @@ try {
     throw "Supabase migration check failed"
   }
 
+  Write-Host "== Secret scan =="
+  powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root "scripts/check-secrets.ps1")
+  if ($LASTEXITCODE -ne 0) {
+    throw "Secret scan failed"
+  }
+
   Write-Host "== Python compile =="
   python -m compileall backend
   if ($LASTEXITCODE -ne 0) {

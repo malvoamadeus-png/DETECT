@@ -14,6 +14,7 @@ Last audited: 2026-05-26 Asia/Shanghai
 - Frontend lint, typecheck, and production build succeed; the build includes `/api/dashboard` and `/api/health`.
 - Frontend server API can read the same Postgres database through `SUPABASE_DB_URL`.
 - Vercel env template and preflight checker exist for `SUPABASE_DB_URL` without printing secrets.
+- Tracked-file secret scan is part of local preflight and CI wiring.
 - Local smoke test against the dashboard API has returned real data.
 - Linux worker install, restart, health, log, and bootstrap scripts exist.
 - Linux worker server-side preflight script exists for read-only diagnostics before/after install.
