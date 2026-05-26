@@ -51,27 +51,28 @@ fi
 "@
 }
 
-if ($DryRun -and $UploadEnv) {
-  throw "-DryRun cannot be combined with -UploadEnv."
-}
-
 if (-not $DryRun -and -not (Get-Command ssh -ErrorAction SilentlyContinue)) {
   throw "ssh is required in PATH."
 }
 
+$remoteEnvTemp = ""
 if ($UploadEnv) {
-  if (-not (Get-Command scp -ErrorAction SilentlyContinue)) {
-    throw "scp is required in PATH when -UploadEnv is used."
-  }
-  if (-not (Test-Path -LiteralPath $EnvPath)) {
-    throw "Env file not found: $EnvPath"
-  }
-  Write-Host "Uploading env file to ${HostName}:$AppDir/.env"
-  $bootstrap = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes((Get-RemoteBootstrapScript)))
-  Invoke-Remote "echo '$bootstrap' | base64 -d | bash"
-  scp $EnvPath "${HostName}:$AppDir/.env"
-  if ($LASTEXITCODE -ne 0) {
-    throw "scp failed while uploading env file."
+  if ($DryRun) {
+    $remoteEnvTemp = "/tmp/detect-env-dry-run"
+    Write-Host "upload_env=dry_run temp=$remoteEnvTemp"
+  } else {
+    if (-not (Get-Command scp -ErrorAction SilentlyContinue)) {
+      throw "scp is required in PATH when -UploadEnv is used."
+    }
+    if (-not (Test-Path -LiteralPath $EnvPath)) {
+      throw "Env file not found: $EnvPath"
+    }
+    $remoteEnvTemp = "/tmp/detect-env-$([guid]::NewGuid().ToString('N'))"
+    Write-Host "Uploading env file to ${HostName}:$remoteEnvTemp"
+    scp $EnvPath "${HostName}:$remoteEnvTemp"
+    if ($LASTEXITCODE -ne 0) {
+      throw "scp failed while uploading env file."
+    }
   }
 }
 
@@ -95,6 +96,16 @@ export DETECT_APP_DIR='$AppDir'
 export DETECT_REPO_URL='$RepoUrl'
 export DETECT_SERVICE_NAME='$ServiceName'
 "@
+
+if ($UploadEnv) {
+  $remoteScript += @"
+
+if [ -f '$remoteEnvTemp' ]; then
+  install -m 600 '$remoteEnvTemp' '$AppDir/.env'
+  rm -f '$remoteEnvTemp'
+fi
+"@
+}
 
 if (-not $SkipBootstrap) {
   $remoteScript += @"

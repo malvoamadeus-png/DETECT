@@ -164,7 +164,7 @@ If the server does not have `/opt/DETECT/.env` yet and you have confirmed the ta
 .\scripts\deploy-linux.ps1 -HostName user@host -UploadEnv -EnvPath .env
 ```
 
-`-UploadEnv` copies the local `.env` to the server. Use it only for the intended production server.
+`-UploadEnv` copies the local `.env` to a temporary remote path, then installs it as `/opt/DETECT/.env` with mode `600` after the repo checkout/update step. Use it only for the intended production server.
 
 Once the worker host and public Vercel URL are both known, run the final orchestrator:
 

@@ -49,6 +49,29 @@ try {
   }
   Write-Host "deploy_linux_dry_run=ok"
 
+  Write-Host "== Remote deploy upload-env dry-run =="
+  $uploadEnvDryRun = powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root "scripts/deploy-linux.ps1") -HostName "dry-run@example" -UploadEnv -DryRun 2>&1
+  if ($LASTEXITCODE -ne 0) {
+    throw "deploy-linux upload-env dry-run failed"
+  }
+  $uploadEnvScript = ($uploadEnvDryRun -join "`n")
+  $requiredUploadFragments = @(
+    "upload_env=dry_run temp=/tmp/detect-env-dry-run",
+    "git clone",
+    "install -m 600 '/tmp/detect-env-dry-run' '/opt/DETECT/.env'",
+    "rm -f '/tmp/detect-env-dry-run'",
+    "bash scripts/linux/install-worker.sh"
+  )
+  foreach ($fragment in $requiredUploadFragments) {
+    if ($uploadEnvScript -notlike "*$fragment*") {
+      throw "deploy-linux upload-env dry-run is missing: $fragment"
+    }
+  }
+  if ($uploadEnvScript -match "scp\s+.*\.env") {
+    throw "deploy-linux upload-env dry-run should not run scp."
+  }
+  Write-Host "deploy_linux_upload_env_dry_run=ok"
+
   Write-Host "== Vercel env template =="
   powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root "scripts/check-vercel-env.ps1") -EnvPath "frontend/.env.production.example" -AllowPlaceholders
   if ($LASTEXITCODE -ne 0) {
