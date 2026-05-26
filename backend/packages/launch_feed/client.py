@@ -18,6 +18,15 @@ def _person(payload: dict[str, Any], key: str) -> dict[str, Any]:
     return value if isinstance(value, dict) else {}
 
 
+def _int_or_none(value: Any) -> int | None:
+    try:
+        if isinstance(value, bool) or value is None or value == "":
+            return None
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
 def parse_launch(payload: dict[str, Any]) -> LaunchRecord | None:
     activity_id = _str(payload, "activityId")
     if not activity_id:
@@ -37,7 +46,7 @@ def parse_launch(payload: dict[str, Any]) -> LaunchRecord | None:
         tweet_url=_str(payload, "tweetUrl"),
         metadata_uri=_str(payload, "metadataUri"),
         image_uri=_str(payload, "imageUri"),
-        timestamp_ms=int(timestamp) if isinstance(timestamp, int) else None,
+        timestamp_ms=_int_or_none(timestamp),
         deployer=_person(payload, "deployer"),
         fee_recipient=_person(payload, "feeRecipient"),
         raw_payload=payload,
@@ -46,7 +55,7 @@ def parse_launch(payload: dict[str, Any]) -> LaunchRecord | None:
 
 def fetch_latest_launches() -> list[LaunchRecord]:
     payload = get_json(BANKR_LAUNCHES_URL)
-    launches = payload.get("launches")
+    launches = payload.get("launches") or payload.get("data") or payload.get("items")
     if not isinstance(launches, list):
         return []
     parsed: list[LaunchRecord] = []
@@ -56,4 +65,3 @@ def fetch_latest_launches() -> list[LaunchRecord]:
             if launch:
                 parsed.append(launch)
     return parsed
-
