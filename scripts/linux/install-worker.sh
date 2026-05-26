@@ -35,6 +35,7 @@ if [ ! -f "$APP_DIR/.env" ]; then
   exit 1
 fi
 
+python backend/src/main.py check-env
 python backend/src/main.py migrate
 python backend/src/main.py dashboard --limit 1 >/dev/null
 

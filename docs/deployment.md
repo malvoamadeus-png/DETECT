@@ -34,6 +34,7 @@ cd /opt/DETECT
 python3 -m venv .venv
 . .venv/bin/activate
 pip install -r backend/requirements.txt
+python backend/src/main.py check-env
 python backend/src/main.py migrate
 python backend/src/main.py run-once --limit 3
 ```

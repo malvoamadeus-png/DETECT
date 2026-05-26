@@ -40,6 +40,7 @@ DETECT/
 cd D:\Coding\DETECT
 python -m venv .venv
 .\.venv\Scripts\pip install -r backend\requirements.txt
+.\.venv\Scripts\python backend\src\main.py check-env
 .\.venv\Scripts\python backend\src\main.py migrate
 .\.venv\Scripts\python backend\src\main.py run-once --limit 5
 .\.venv\Scripts\python backend\src\main.py run-worker
