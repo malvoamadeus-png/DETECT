@@ -5,8 +5,8 @@ Last audited: 2026-05-26 Asia/Shanghai
 ## Proven Complete
 
 - Code is pushed to GitHub remote `git@github.com:malvoamadeus-png/DETECT.git`.
-- Local `main` and `origin/main` are aligned at the latest pushed commit.
-- Latest GitHub Actions CI for `origin/main` has completed successfully at the time of audit.
+- Local `main` and `origin/main` are aligned at commit `c0d820c`.
+- Latest GitHub Actions CI for `origin/main` completed successfully: https://github.com/malvoamadeus-png/DETECT/actions/runs/26447186628
 - Supabase migrations have been applied locally through the backend migration command.
 - Backend worker can run a real analysis pass and has produced dashboard rows in Supabase.
 - Frontend production build succeeds and includes `/api/dashboard` and `/api/health`.
@@ -14,6 +14,7 @@ Last audited: 2026-05-26 Asia/Shanghai
 - Local smoke test against the dashboard API has returned real data.
 - Linux worker install, restart, health, log, and bootstrap scripts exist.
 - Windows helper scripts exist for Linux worker deploy, Vercel deploy, readiness checks, smoke tests, and local preflight.
+- Linux worker deploy dry-run is covered by local verification and GitHub Actions, including first-server bootstrap before clone.
 - Real `.env` remains ignored and is not committed.
 
 ## Current External Blockers
