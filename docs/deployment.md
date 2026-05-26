@@ -141,6 +141,13 @@ bash scripts/linux/preflight-worker.sh
 bash scripts/linux/healthcheck-worker.sh
 ```
 
+Require at least one dashboard row during production validation:
+
+```bash
+cd /opt/DETECT
+DETECT_HEALTH_MIN_DASHBOARD_ROWS=1 bash scripts/linux/healthcheck-worker.sh
+```
+
 Follow live worker logs:
 
 ```bash
@@ -173,13 +180,21 @@ If the server does not have `/opt/DETECT/.env` yet and you have confirmed the ta
 
 `-UploadEnv` copies the local `.env` to a temporary remote path, then installs it as `/opt/DETECT/.env` with mode `600` after the repo checkout/update step. Use it only for the intended production server.
 
+After deploy, verify the remote worker over SSH and require at least one dashboard row:
+
+```powershell
+.\scripts\smoke-linux-worker.ps1 -HostName user@host -MinimumRows 1
+```
+
+The PowerShell smoke test waits up to 180 seconds by default so the worker has time to finish its first poll after a restart.
+
 Once the worker host and public Vercel URL are both known, run the final orchestrator:
 
 ```powershell
 .\scripts\deploy-full.ps1 -SshHost user@host -VercelBaseUrl https://<your-vercel-domain>
 ```
 
-This runs local preflight, readiness checks, optional Vercel env validation, Linux worker deploy, and frontend smoke testing. Use `-DryRun` to preview the worker deployment portion.
+This runs local preflight, readiness checks, optional Vercel env validation, Linux worker deploy, worker smoke testing, and frontend smoke testing. Use `-DryRun` to preview the worker deployment portion.
 
 If Vercel CLI is installed, authenticated, and linked to the project, the orchestrator can also sync production env and deploy the frontend:
 

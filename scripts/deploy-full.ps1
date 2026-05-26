@@ -5,6 +5,7 @@ param(
   [string]$VercelEnvPath = "frontend/.env.production.local",
   [string]$VercelEnvSourcePath = ".env",
   [string]$WorkerEnvPath = ".env",
+  [int]$WorkerMinimumRows = 1,
   [switch]$UploadWorkerEnv,
   [switch]$SyncVercelEnv,
   [switch]$DeployVercel,
@@ -141,6 +142,15 @@ try {
     }
   } elseif (-not $VercelBaseUrl) {
     Write-Host "vercel_smoke=skipped pass -VercelBaseUrl https://your-app.vercel.app to verify frontend"
+  }
+
+  if ($SshHost -and -not $SkipWorkerDeploy -and -not $DryRun) {
+    Invoke-Step "Linux worker smoke test" {
+      powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root "scripts/smoke-linux-worker.ps1") -HostName $SshHost -AppDir $AppDir -MinimumRows $WorkerMinimumRows
+      if ($LASTEXITCODE -ne 0) {
+        throw "Linux worker smoke test failed."
+      }
+    }
   }
 } finally {
   Pop-Location

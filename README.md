@@ -108,6 +108,14 @@ After Vercel deploys, verify the public app:
 .\scripts\smoke-vercel.ps1 -BaseUrl https://your-vercel-domain
 ```
 
+After the Linux worker deploys, verify the remote service and require at least one dashboard row:
+
+```powershell
+.\scripts\smoke-linux-worker.ps1 -HostName user@host -MinimumRows 1
+```
+
+The smoke test waits up to 180 seconds by default so the worker has time to finish its first poll after a restart.
+
 If Vercel CLI is installed and linked:
 
 ```powershell

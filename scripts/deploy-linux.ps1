@@ -123,7 +123,7 @@ if (-not $SkipRestart) {
   $remoteScript += @"
 
 sudo systemctl restart '$ServiceName.service'
-bash scripts/linux/healthcheck-worker.sh
+DETECT_HEALTH_MIN_DASHBOARD_ROWS=0 bash scripts/linux/healthcheck-worker.sh
 "@
 }
 

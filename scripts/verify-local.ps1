@@ -137,7 +137,7 @@ DATABASE_URL=postgres://user.projref@host.example/db
     "python3 -m venv --help",
     "python3 -m pip --version",
     "bash scripts/linux/install-worker.sh",
-    "bash scripts/linux/healthcheck-worker.sh"
+    "DETECT_HEALTH_MIN_DASHBOARD_ROWS=0 bash scripts/linux/healthcheck-worker.sh"
   )
   foreach ($fragment in $requiredDeployFragments) {
     if ($deployScript -notlike "*$fragment*") {

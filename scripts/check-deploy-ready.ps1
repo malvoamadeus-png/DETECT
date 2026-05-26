@@ -157,6 +157,7 @@ try {
     "scripts/run-frontend.ps1",
     "scripts/run-once.ps1",
     "scripts/run-worker.ps1",
+    "scripts/smoke-linux-worker.ps1",
     "scripts/smoke-vercel.ps1",
     "scripts/sync-vercel-env.ps1",
     "scripts/trigger-ci.ps1"
