@@ -24,8 +24,8 @@ export async function GET(request: Request) {
       }
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Dashboard query failed";
-    return new NextResponse(message, { status: 500 });
+    console.error("dashboard query failed", error);
+    return new NextResponse("Dashboard query failed", { status: 500 });
   } finally {
     await client.end().catch(() => undefined);
   }

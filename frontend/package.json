@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "check:api-errors": "node scripts/check-api-errors.mjs",
     "check:limits": "node scripts/check-limits.mjs",
     "check:server-db": "node scripts/check-server-db.mjs",
     "start": "next start",

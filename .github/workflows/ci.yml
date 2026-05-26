@@ -23,6 +23,7 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run typecheck
+      - run: npm run check:api-errors
       - run: npm run check:limits
       - run: npm run check:server-db
       - run: npm run build

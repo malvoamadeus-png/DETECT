@@ -26,8 +26,8 @@ export async function GET() {
       }
     );
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Health check failed";
-    return NextResponse.json({ ok: false, error: message }, { status: 500 });
+    console.error("health check failed", error);
+    return NextResponse.json({ ok: false, error: "Health check failed" }, { status: 500 });
   } finally {
     await client.end().catch(() => undefined);
   }
