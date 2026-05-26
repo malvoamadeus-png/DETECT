@@ -150,6 +150,14 @@ If the server does not have `/opt/DETECT/.env` yet and you have confirmed the ta
 
 `-UploadEnv` copies the local `.env` to the server. Use it only for the intended production server.
 
+Once the worker host and public Vercel URL are both known, run the final orchestrator:
+
+```powershell
+.\scripts\deploy-full.ps1 -SshHost user@host -VercelBaseUrl https://<your-vercel-domain>
+```
+
+This runs local preflight, readiness checks, optional Vercel env validation, Linux worker deploy, and frontend smoke testing. Use `-DryRun` to preview the worker deployment portion.
+
 ## Vercel
 
 Project settings:

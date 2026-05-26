@@ -81,6 +81,12 @@ From Windows, once SSH is available:
 .\scripts\deploy-linux.ps1 -HostName user@host
 ```
 
+Or run the final deployment orchestrator once both the worker host and public frontend URL are known:
+
+```powershell
+.\scripts\deploy-full.ps1 -SshHost user@host -VercelBaseUrl https://your-vercel-domain
+```
+
 Preview the generated remote deployment script without connecting:
 
 ```powershell
