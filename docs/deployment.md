@@ -91,7 +91,8 @@ Wants=network-online.target
 Type=simple
 WorkingDirectory=/opt/DETECT
 EnvironmentFile=/opt/DETECT/.env
-ExecStart=/opt/DETECT/.venv/bin/python /opt/DETECT/backend/src/main.py run-worker
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/opt/DETECT/.venv/bin/python -u /opt/DETECT/backend/src/main.py run-worker
 Restart=always
 RestartSec=10
 

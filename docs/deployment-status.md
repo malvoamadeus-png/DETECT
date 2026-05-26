@@ -5,8 +5,8 @@ Last audited: 2026-05-26 Asia/Shanghai
 ## Proven Complete
 
 - Code is pushed to GitHub remote `git@github.com:malvoamadeus-png/DETECT.git`.
-- Local `main` and `origin/main` are aligned at `ff5e936`.
-- Latest GitHub Actions CI for `ff5e936` completed successfully.
+- Local `main` and `origin/main` are aligned at the latest pushed commit.
+- Latest GitHub Actions CI for `origin/main` has completed successfully at the time of audit.
 - Supabase migrations have been applied locally through the backend migration command.
 - Backend worker can run a real analysis pass and has produced dashboard rows in Supabase.
 - Frontend production build succeeds and includes `/api/dashboard` and `/api/health`.
