@@ -109,7 +109,7 @@ def check_env() -> int:
             indent=2,
         )
     )
-    if statuses["OPENAI_API_KEY"] == "missing" or statuses["SUPABASE_DB_URL"] == "missing":
+    if statuses["OPENAI_API_KEY"] == "missing" or (statuses["SUPABASE_DB_URL"] == "missing" and statuses["DATABASE_URL"] == "missing"):
         return 1
     if public_mismatch:
         return 1

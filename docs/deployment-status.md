@@ -20,7 +20,7 @@ Last audited: 2026-05-26 Asia/Shanghai
 - Windows helper scripts exist for Linux worker deploy, Vercel deploy, readiness checks, smoke tests, and local preflight.
 - Final deployment orchestrator exists for local preflight, readiness, worker deploy, and frontend smoke testing once external targets are known.
 - Linux worker deploy dry-run is covered by local verification and is wired into GitHub Actions, including first-server bootstrap before clone.
-- Backend unit tests cover X cursor pagination, tweet dedupe, author filtering, 50-post defaults, configured target persistence, and OpenAI analysis fallback behavior.
+- Backend unit tests cover X cursor pagination, tweet dedupe, author filtering, 50-post defaults, configured target persistence, OpenAI analysis fallback behavior, and redacted environment diagnostics.
 - Real `.env` remains ignored and is not committed.
 
 ## Current External Blockers
