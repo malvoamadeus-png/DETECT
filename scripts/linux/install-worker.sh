@@ -50,7 +50,8 @@ Wants=network-online.target
 Type=simple
 WorkingDirectory=${APP_DIR}
 EnvironmentFile=${APP_DIR}/.env
-ExecStart=${APP_DIR}/.venv/bin/python ${APP_DIR}/backend/src/main.py run-worker
+Environment=PYTHONUNBUFFERED=1
+ExecStart=${APP_DIR}/.venv/bin/python -u ${APP_DIR}/backend/src/main.py run-worker
 Restart=always
 RestartSec=10
 

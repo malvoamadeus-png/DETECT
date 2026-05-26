@@ -114,6 +114,13 @@ cd /opt/DETECT
 bash scripts/linux/healthcheck-worker.sh
 ```
 
+Follow live worker logs:
+
+```bash
+cd /opt/DETECT
+bash scripts/linux/logs-worker.sh
+```
+
 ## Remote Deploy From Windows
 
 After SSH access is ready, deploy from this local workspace:

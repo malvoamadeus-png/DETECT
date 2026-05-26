@@ -63,6 +63,7 @@ cd /opt/DETECT
 bash scripts/linux/install-worker.sh
 sudo systemctl restart detect-worker.service
 bash scripts/linux/healthcheck-worker.sh
+bash scripts/linux/logs-worker.sh
 ```
 
 Create `/opt/DETECT/.env` from `.env.example` before starting the service. Do not commit the real `.env`.
