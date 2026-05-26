@@ -217,9 +217,12 @@ Project settings:
 ```text
 Root Directory: frontend
 Framework Preset: Next.js
+Node.js Version: 22.x
 Build Command: npm run build
 Install Command: npm install
 ```
+
+The frontend package declares `engines.node` as `>=20.9.0`; CI currently builds with Node 22.
 
 Recommended Vercel environment variable:
 

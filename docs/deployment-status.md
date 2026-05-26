@@ -14,6 +14,8 @@ Last audited: 2026-05-26 Asia/Shanghai
 - Supabase migration structure is covered by local preflight and CI wiring.
 - Backend worker can run a real analysis pass and has produced dashboard rows in Supabase.
 - Frontend lint, typecheck, dashboard API limit checks, public API error-response checks, server DB config checks, and production build succeed; the build includes `/api/dashboard` and `/api/health`.
+- Frontend declares a Node engine range of `>=20.9.0`; CI builds with Node 22 and Vercel should use Node 22.x.
+- Frontend dependencies are pinned to `next@16.2.6` and `eslint-config-next@16.2.6`, with an override lifting Next's bundled PostCSS to `8.5.10`; local `npm audit` is currently clean.
 - Frontend server API can read the same Postgres database through `SUPABASE_DB_URL`; the server-side Postgres client uses SSL plus explicit connection/query/statement timeouts.
 - Vercel env template and preflight checker exist for `SUPABASE_DB_URL` without printing secrets.
 - Current local env has usable `OPENAI_API_KEY`, `OPENAI_BASE_URL`, and `SUPABASE_DB_URL`. Public Supabase URL/key are present but appear to reference a different project from `SUPABASE_DB_URL`, so the first production frontend path should keep using `/api/dashboard` backed by `SUPABASE_DB_URL`.
