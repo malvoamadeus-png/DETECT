@@ -1,6 +1,7 @@
 param(
   [string]$VercelBaseUrl = "",
-  [string]$SshHost = ""
+  [string]$SshHost = "",
+  [string]$GitHubRepo = "malvoamadeus-png/DETECT"
 )
 
 $ErrorActionPreference = "Stop"
@@ -25,6 +26,27 @@ function Test-Command {
   return [bool](Get-Command $Name -ErrorAction SilentlyContinue)
 }
 
+function Test-GitHubActions {
+  param(
+    [string]$Repo,
+    [string]$ExpectedSha
+  )
+  try {
+    $headers = @{ "User-Agent" = "DETECT-readiness" }
+    $uri = "https://api.github.com/repos/$Repo/actions/runs?per_page=5"
+    $runs = Invoke-RestMethod -Headers $headers -Uri $uri -TimeoutSec 30
+    $run = @($runs.workflow_runs | Where-Object { $_.head_sha -eq $ExpectedSha } | Select-Object -First 1)
+    if (-not $run) {
+      Write-Check "github_actions" $false "no run found for $ExpectedSha"
+      return
+    }
+    $ok = $run.status -eq "completed" -and $run.conclusion -eq "success"
+    Write-Check "github_actions" $ok "status=$($run.status) conclusion=$($run.conclusion) url=$($run.html_url)"
+  } catch {
+    Write-Host "github_actions=skipped $($_.Exception.Message)"
+  }
+}
+
 Push-Location $root
 try {
   Write-Host "== repository =="
@@ -32,6 +54,10 @@ try {
   Write-Check "git_clean" (-not $status) ($(if ($status) { "working tree has changes or ignored-only status hidden" } else { "" }))
   $remoteHead = git ls-remote --heads origin main
   Write-Check "github_origin_main" ([bool]$remoteHead)
+  $originSha = (git rev-parse origin/main).Trim()
+  $headSha = (git rev-parse HEAD).Trim()
+  Write-Check "head_matches_origin_main" ($headSha -eq $originSha) "head=$($headSha.Substring(0, 7)) origin=$($originSha.Substring(0, 7))"
+  Test-GitHubActions -Repo $GitHubRepo -ExpectedSha $originSha
 
   Write-Host "== local tools =="
   Write-Check "ssh" (Test-Command "ssh")
