@@ -5,9 +5,9 @@ Last audited: 2026-05-26 Asia/Shanghai
 ## Proven Complete
 
 - Code is pushed to GitHub remote `git@github.com:malvoamadeus-png/DETECT.git`.
-- Local `main` and `origin/main` are aligned at commit `f4ef019`.
-- Local preflight passes at `f4ef019`, including backend tests, worker deploy dry-run, backend environment check, and frontend production build.
-- Latest GitHub Actions CI with completed checks is under re-verification after adding backend tests and Windows dry-run execution-policy fixes.
+- Local `main` and `origin/main` are aligned at commit `6554fea`.
+- Local preflight passes at `6554fea`, including backend tests, worker deploy dry-run, backend environment check, and frontend production build.
+- GitHub Actions has `push`, `pull_request`, and `workflow_dispatch` triggers, but the latest pushed commits after `83189ec` are currently waiting for checks information on GitHub. Run the `CI` workflow manually from the Actions tab if automatic checks do not start.
 - Supabase migrations have been applied locally through the backend migration command.
 - Backend worker can run a real analysis pass and has produced dashboard rows in Supabase.
 - Frontend production build succeeds and includes `/api/dashboard` and `/api/health`.
