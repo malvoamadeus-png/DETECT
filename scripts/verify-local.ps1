@@ -121,6 +121,12 @@ try {
         throw "frontend typecheck failed"
       }
 
+      Write-Host "== Frontend API limit checks =="
+      npm.cmd run check:limits
+      if ($LASTEXITCODE -ne 0) {
+        throw "frontend API limit checks failed"
+      }
+
       Write-Host "== Frontend build =="
       npm.cmd run build
       if ($LASTEXITCODE -ne 0) {

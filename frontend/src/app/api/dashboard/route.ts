@@ -1,15 +1,10 @@
 import { NextResponse } from "next/server";
 
+import { dashboardLimit } from "@/lib/limits";
 import { createDatabaseClient, databaseUrl } from "@/lib/server-db";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
-
-function safeLimit(value: string | null) {
-  const parsed = Number(value ?? 80);
-  if (!Number.isFinite(parsed)) return 80;
-  return Math.max(1, Math.min(500, Math.floor(parsed)));
-}
 
 export async function GET(request: Request) {
   if (!databaseUrl()) {
@@ -17,7 +12,7 @@ export async function GET(request: Request) {
   }
 
   const url = new URL(request.url);
-  const limit = safeLimit(url.searchParams.get("limit"));
+  const limit = dashboardLimit(url.searchParams.get("limit"));
   const client = createDatabaseClient();
 
   try {
