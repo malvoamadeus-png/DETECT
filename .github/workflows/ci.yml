@@ -13,28 +13,51 @@ permissions:
 jobs:
   frontend:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout source
+        shell: bash
+        run: |
+          git init .
+          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
+          git fetch --depth 1 origin "${GITHUB_REF}"
+          git checkout --force --detach FETCH_HEAD
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
           cache: npm
           cache-dependency-path: frontend/package-lock.json
-      - run: npm ci
-      - run: npm run lint
-      - run: npm run typecheck
-      - run: npm run check:api-errors
-      - run: npm run check:limits
-      - run: npm run check:server-db
-      - run: npm run build
+      - name: Frontend install
+        working-directory: frontend
+        run: npm ci
+      - name: Frontend lint
+        working-directory: frontend
+        run: npm run lint
+      - name: Frontend typecheck
+        working-directory: frontend
+        run: npm run typecheck
+      - name: Frontend API error checks
+        working-directory: frontend
+        run: npm run check:api-errors
+      - name: Frontend API limit checks
+        working-directory: frontend
+        run: npm run check:limits
+      - name: Frontend server DB checks
+        working-directory: frontend
+        run: npm run check:server-db
+      - name: Frontend build
+        working-directory: frontend
+        run: npm run build
 
   backend:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout source
+        shell: bash
+        run: |
+          git init .
+          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
+          git fetch --depth 1 origin "${GITHUB_REF}"
+          git checkout --force --detach FETCH_HEAD
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -51,7 +74,13 @@ jobs:
   scripts:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout source
+        shell: bash
+        run: |
+          git init .
+          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
+          git fetch --depth 1 origin "${GITHUB_REF}"
+          git checkout --force --detach FETCH_HEAD
       - name: Parse PowerShell scripts
         shell: pwsh
         run: |

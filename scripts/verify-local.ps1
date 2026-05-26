@@ -32,6 +32,23 @@ try {
   }
   Write-Host "readiness_github_origin_fallback=ok"
 
+  $workflow = Get-Content -Raw -LiteralPath (Join-Path $root ".github/workflows/ci.yml")
+  $requiredWorkflowFragments = @(
+    "git fetch --depth 1 origin",
+    "git checkout --force --detach FETCH_HEAD",
+    "Frontend API error checks",
+    "Frontend server DB checks"
+  )
+  foreach ($fragment in $requiredWorkflowFragments) {
+    if ($workflow -notlike "*$fragment*") {
+      throw "CI workflow is missing required manual checkout fragment: $fragment"
+    }
+  }
+  if ($workflow -like "*actions/checkout@v4*") {
+    throw "CI workflow should not use actions/checkout@v4 after manual checkout hardening."
+  }
+  Write-Host "workflow_manual_checkout=ok"
+
   Write-Host "== Bash syntax =="
   bash -n scripts/linux/bootstrap-server.sh scripts/linux/install-worker.sh scripts/linux/healthcheck-worker.sh scripts/linux/restart-worker.sh scripts/linux/logs-worker.sh scripts/linux/preflight-worker.sh
   if ($LASTEXITCODE -ne 0) {
