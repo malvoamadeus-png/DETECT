@@ -49,6 +49,12 @@ try {
   }
   Write-Host "deploy_linux_dry_run=ok"
 
+  Write-Host "== Vercel env template =="
+  powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root "scripts/check-vercel-env.ps1") -EnvPath "frontend/.env.production.example" -AllowPlaceholders
+  if ($LASTEXITCODE -ne 0) {
+    throw "Vercel env template check failed"
+  }
+
   Write-Host "== Python compile =="
   python -m compileall backend
   if ($LASTEXITCODE -ne 0) {

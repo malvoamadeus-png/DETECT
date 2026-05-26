@@ -45,6 +45,7 @@ jobs:
         run: |
           $scripts = @(
             "scripts/check-deploy-ready.ps1",
+            "scripts/check-vercel-env.ps1",
             "scripts/deploy-linux.ps1",
             "scripts/deploy-vercel.ps1",
             "scripts/run-frontend.ps1",
@@ -86,3 +87,6 @@ jobs:
             throw "deploy-linux dry-run contains an unconditional exit 0 that can stop deployment early"
           }
           Write-Host "deploy-linux dry-run ok"
+      - name: Validate Vercel env template
+        shell: pwsh
+        run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/check-vercel-env.ps1 -EnvPath frontend/.env.production.example -AllowPlaceholders

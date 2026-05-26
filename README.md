@@ -56,6 +56,12 @@ npm.cmd --prefix frontend install
 
 The frontend is a read-only dashboard. On Vercel, set the root directory to `frontend` and add `SUPABASE_DB_URL` so `/api/dashboard` reads the same database as the worker. `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are optional fallback variables.
 
+Before deploying on Vercel, copy `frontend/.env.production.example` to `frontend/.env.production.local`, fill `SUPABASE_DB_URL`, and verify it without printing secrets:
+
+```powershell
+.\scripts\check-vercel-env.ps1
+```
+
 ## Linux Worker Deployment
 
 ```bash

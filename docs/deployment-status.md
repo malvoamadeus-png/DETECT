@@ -12,6 +12,7 @@ Last audited: 2026-05-26 Asia/Shanghai
 - Backend worker can run a real analysis pass and has produced dashboard rows in Supabase.
 - Frontend production build succeeds and includes `/api/dashboard` and `/api/health`.
 - Frontend server API can read the same Postgres database through `SUPABASE_DB_URL`.
+- Vercel env template and preflight checker exist for `SUPABASE_DB_URL` without printing secrets.
 - Local smoke test against the dashboard API has returned real data.
 - Linux worker install, restart, health, log, and bootstrap scripts exist.
 - Windows helper scripts exist for Linux worker deploy, Vercel deploy, readiness checks, smoke tests, and local preflight.

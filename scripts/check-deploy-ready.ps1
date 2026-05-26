@@ -104,6 +104,7 @@ try {
   Write-Host "== script syntax =="
   $scripts = @(
     "scripts/check-deploy-ready.ps1",
+    "scripts/check-vercel-env.ps1",
     "scripts/deploy-linux.ps1",
     "scripts/deploy-vercel.ps1",
     "scripts/run-frontend.ps1",
