@@ -100,3 +100,25 @@ jobs:
       - name: Validate Vercel env template
         shell: pwsh
         run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/check-vercel-env.ps1 -EnvPath frontend/.env.production.example -AllowPlaceholders
+      - name: Validate worker env template
+        shell: pwsh
+        run: |
+          if (-not (Test-Path -LiteralPath ".env.example")) {
+            throw "Missing .env.example"
+          }
+          $envExample = Get-Content -Raw -LiteralPath ".env.example"
+          $requiredEnvKeys = @(
+            "OPENAI_API_KEY",
+            "OPENAI_BASE_URL",
+            "OPENAI_MODEL",
+            "SUPABASE_DB_URL",
+            "DETECT_POLL_SECONDS",
+            "DETECT_TARGET_TWEETS",
+            "DETECT_MAX_X_PAGES"
+          )
+          foreach ($key in $requiredEnvKeys) {
+            if ($envExample -notmatch "(?m)^\s*$key=") {
+              throw ".env.example is missing $key"
+            }
+          }
+          Write-Host ".env.example ok"

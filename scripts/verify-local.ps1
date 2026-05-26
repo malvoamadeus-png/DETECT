@@ -54,6 +54,25 @@ try {
   if ($LASTEXITCODE -ne 0) {
     throw "Vercel env template check failed"
   }
+  if (-not (Test-Path -LiteralPath (Join-Path $root ".env.example"))) {
+    throw "Missing root .env.example used by Linux worker deployment docs."
+  }
+  $envExample = Get-Content -Raw -LiteralPath (Join-Path $root ".env.example")
+  $requiredEnvKeys = @(
+    "OPENAI_API_KEY",
+    "OPENAI_BASE_URL",
+    "OPENAI_MODEL",
+    "SUPABASE_DB_URL",
+    "DETECT_POLL_SECONDS",
+    "DETECT_TARGET_TWEETS",
+    "DETECT_MAX_X_PAGES"
+  )
+  foreach ($key in $requiredEnvKeys) {
+    if ($envExample -notmatch "(?m)^\s*$key=") {
+      throw ".env.example is missing $key"
+    }
+  }
+  Write-Host "root_env_example=ok .env.example"
 
   Write-Host "== Supabase migrations =="
   powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root "scripts/check-migrations.ps1")
