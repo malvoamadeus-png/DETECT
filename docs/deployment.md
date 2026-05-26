@@ -158,6 +158,8 @@ Once the worker host and public Vercel URL are both known, run the final orchest
 
 This runs local preflight, readiness checks, optional Vercel env validation, Linux worker deploy, and frontend smoke testing. Use `-DryRun` to preview the worker deployment portion.
 
+If `SUPABASE_DB_URL` was configured directly in the Vercel dashboard and no local `frontend/.env.production.local` exists, add `-SkipVercelEnvCheck`.
+
 ## Vercel
 
 Project settings:

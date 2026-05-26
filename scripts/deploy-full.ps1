@@ -8,6 +8,7 @@ param(
   [switch]$SkipLocalPreflight,
   [switch]$SkipReadiness,
   [switch]$SkipWorkerDeploy,
+  [switch]$SkipVercelEnvCheck,
   [switch]$SkipVercelSmoke,
   [switch]$DryRun
 )
@@ -51,13 +52,15 @@ try {
     }
   }
 
-  if ($VercelBaseUrl) {
+  if ($VercelBaseUrl -and -not $SkipVercelEnvCheck) {
     Invoke-Step "Vercel env file" {
       powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root "scripts/check-vercel-env.ps1") -EnvPath $VercelEnvPath
       if ($LASTEXITCODE -ne 0) {
         throw "Vercel env check failed."
       }
     }
+  } elseif ($VercelBaseUrl) {
+    Write-Host "vercel_env_file=skipped assuming Vercel Dashboard env is configured"
   }
 
   if ($SshHost -and -not $SkipWorkerDeploy) {

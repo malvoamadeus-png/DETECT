@@ -87,6 +87,8 @@ Or run the final deployment orchestrator once both the worker host and public fr
 .\scripts\deploy-full.ps1 -SshHost user@host -VercelBaseUrl https://your-vercel-domain
 ```
 
+If `SUPABASE_DB_URL` is configured directly in the Vercel dashboard instead of `frontend/.env.production.local`, add `-SkipVercelEnvCheck`.
+
 Preview the generated remote deployment script without connecting:
 
 ```powershell
