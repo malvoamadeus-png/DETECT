@@ -8,7 +8,8 @@ param(
   [string]$EnvPath = ".env",
   [switch]$UploadEnv,
   [switch]$SkipBootstrap,
-  [switch]$SkipRestart
+  [switch]$SkipRestart,
+  [switch]$DryRun
 )
 
 $ErrorActionPreference = "Stop"
@@ -35,9 +36,8 @@ function Get-RemoteDependencyBootstrapScript {
   @"
 set -euo pipefail
 if command -v git >/dev/null 2>&1 && command -v python3 >/dev/null 2>&1; then
-  exit 0
-fi
-if command -v apt-get >/dev/null 2>&1; then
+  echo "Remote dependencies already installed."
+elif command -v apt-get >/dev/null 2>&1; then
   sudo apt-get update
   sudo apt-get install -y git python3 python3-venv python3-pip ca-certificates
 elif command -v dnf >/dev/null 2>&1; then
@@ -51,7 +51,11 @@ fi
 "@
 }
 
-if (-not (Get-Command ssh -ErrorAction SilentlyContinue)) {
+if ($DryRun -and $UploadEnv) {
+  throw "-DryRun cannot be combined with -UploadEnv."
+}
+
+if (-not $DryRun -and -not (Get-Command ssh -ErrorAction SilentlyContinue)) {
   throw "ssh is required in PATH."
 }
 
@@ -114,4 +118,9 @@ bash scripts/linux/healthcheck-worker.sh
 
 Write-Host "Deploying DETECT worker to ${HostName}:$AppDir"
 $encoded = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($remoteScript))
+if ($DryRun) {
+  Write-Host "dry_run=ok"
+  Write-Output $remoteScript
+  exit 0
+}
 Invoke-Remote "echo '$encoded' | base64 -d | bash"

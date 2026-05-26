@@ -75,6 +75,12 @@ From Windows, once SSH is available:
 .\scripts\deploy-linux.ps1 -HostName user@host
 ```
 
+Preview the generated remote deployment script without connecting:
+
+```powershell
+.\scripts\deploy-linux.ps1 -HostName user@host -DryRun
+```
+
 After Vercel deploys, verify the public app:
 
 ```powershell

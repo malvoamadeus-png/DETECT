@@ -27,6 +27,28 @@ try {
   }
   Write-Host "bash_scripts=ok"
 
+  Write-Host "== Remote deploy dry-run =="
+  $deployDryRun = & (Join-Path $root "scripts/deploy-linux.ps1") -HostName "dry-run@example" -DryRun 2>&1
+  if ($LASTEXITCODE -ne 0) {
+    throw "deploy-linux dry-run failed"
+  }
+  $deployScript = ($deployDryRun -join "`n")
+  $requiredDeployFragments = @(
+    "git clone",
+    "git pull --ff-only origin main",
+    "bash scripts/linux/install-worker.sh",
+    "bash scripts/linux/healthcheck-worker.sh"
+  )
+  foreach ($fragment in $requiredDeployFragments) {
+    if ($deployScript -notlike "*$fragment*") {
+      throw "deploy-linux dry-run is missing: $fragment"
+    }
+  }
+  if ($deployScript -match "(?m)^\s*exit\s+0\s*$") {
+    throw "deploy-linux dry-run contains an unconditional exit 0 that can stop deployment early"
+  }
+  Write-Host "deploy_linux_dry_run=ok"
+
   Write-Host "== Python compile =="
   python -m compileall backend
   if ($LASTEXITCODE -ne 0) {

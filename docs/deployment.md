@@ -134,6 +134,12 @@ cd D:\Coding\DETECT
 
 By default this first bootstraps minimal packages before cloning the repo, then runs `scripts/linux/bootstrap-server.sh` after checkout. The bootstrap may use `sudo` to install `git`, `python3`, `python3-venv`, `python3-pip`, and CA certificates. Use `-SkipBootstrap` if the server is already prepared.
 
+Preview the generated remote commands before connecting:
+
+```powershell
+.\scripts\deploy-linux.ps1 -HostName user@host -DryRun
+```
+
 If the server does not have `/opt/DETECT/.env` yet and you have confirmed the target machine is correct:
 
 ```powershell
