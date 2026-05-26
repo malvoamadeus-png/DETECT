@@ -65,7 +65,7 @@ jobs:
       - name: Validate Linux deploy dry-run
         shell: pwsh
         run: |
-          $deployDryRun = ./scripts/deploy-linux.ps1 -HostName "dry-run@example" -DryRun 2>&1
+          $deployDryRun = powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/deploy-linux.ps1 -HostName "dry-run@example" -DryRun 2>&1
           if ($LASTEXITCODE -ne 0) {
             throw "deploy-linux dry-run failed"
           }

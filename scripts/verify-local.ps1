@@ -28,7 +28,7 @@ try {
   Write-Host "bash_scripts=ok"
 
   Write-Host "== Remote deploy dry-run =="
-  $deployDryRun = & (Join-Path $root "scripts/deploy-linux.ps1") -HostName "dry-run@example" -DryRun 2>&1
+  $deployDryRun = powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root "scripts/deploy-linux.ps1") -HostName "dry-run@example" -DryRun 2>&1
   if ($LASTEXITCODE -ne 0) {
     throw "deploy-linux dry-run failed"
   }
