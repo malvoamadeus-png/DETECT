@@ -52,6 +52,28 @@ try {
   }
   Write-Host "workflow_manual_checkout=ok"
 
+  Write-Host "== CI checkout probe =="
+  $checkoutProbe = Join-Path $root ".tmp/ci-checkout-probe"
+  if (Test-Path -LiteralPath $checkoutProbe) {
+    Remove-Item -LiteralPath $checkoutProbe -Recurse -Force
+  }
+  New-Item -ItemType Directory -Force -Path $checkoutProbe | Out-Null
+  Push-Location $checkoutProbe
+  try {
+    git init .
+    git remote add origin "https://github.com/malvoamadeus-png/DETECT.git"
+    git fetch --depth 1 origin "refs/heads/main"
+    git checkout --force --detach FETCH_HEAD
+    $probeSha = (git rev-parse --short HEAD).Trim()
+    $localSha = (git -C $root rev-parse --short HEAD).Trim()
+    if ($probeSha -ne $localSha) {
+      throw "CI checkout probe fetched $probeSha, expected $localSha."
+    }
+  } finally {
+    Pop-Location
+  }
+  Write-Host "ci_checkout_probe=ok"
+
   $triggerScript = Get-Content -Raw -LiteralPath (Join-Path $root "scripts/trigger-ci.ps1")
   $requiredTriggerFragments = @(
     "function Get-OptionalGitHubToken",
