@@ -13,6 +13,12 @@ cd D:\Coding\DETECT
 .\scripts\check-deploy-ready.ps1
 ```
 
+Run the local preflight suite before cutting a deployment:
+
+```powershell
+.\scripts\verify-local.ps1
+```
+
 Optional target checks:
 
 ```powershell
