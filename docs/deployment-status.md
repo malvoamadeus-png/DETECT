@@ -5,25 +5,27 @@ Last audited: 2026-05-26 Asia/Shanghai
 ## Proven Complete
 
 - Code is pushed to GitHub remote `git@github.com:malvoamadeus-png/DETECT.git`.
-- Local `main` and `origin/main` were aligned at audited commit `f39dbc3` before this status-only update.
-- Local preflight passes at audited commit `f39dbc3`, including 29 backend tests, worker deploy dry-run, backend environment check, tracked-file secret scan, frontend lint/typecheck, dashboard API limit checks, and frontend production build.
-- GitHub Actions has `push`, `pull_request`, and `workflow_dispatch` triggers. GitHub API showed no Actions run for audited commit `f39dbc3`; the latest visible run was still for older commit `83189ec`. Run the `CI` workflow manually from the Actions tab if automatic checks do not start.
+- Local `main` and `origin/main` are aligned at audited commit `4677d18`.
+- Local preflight passes at audited commit `4677d18`, including 29 backend tests, worker deploy dry-runs, CI checkout probe, backend environment check, tracked-file secret scan, frontend lint/typecheck, dashboard API limit checks, dashboard API error-response checks, server DB config checks, and frontend production build.
+- GitHub Actions has `push`, `pull_request`, and `workflow_dispatch` triggers. The workflow has been hardened with explicit `contents: read` permission and manual HTTPS checkout. Anonymous GitHub API status polling is currently rate-limited; use `GITHUB_TOKEN` or `GH_TOKEN` with `scripts/trigger-ci.ps1 -StatusOnly` for authoritative CI status.
 - Supabase migrations have been applied locally through the backend migration command.
 - Supabase migration structure is covered by local preflight and CI wiring.
 - Backend worker can run a real analysis pass and has produced dashboard rows in Supabase.
-- Frontend lint, typecheck, dashboard API limit checks, and production build succeed; the build includes `/api/dashboard` and `/api/health`.
-- Frontend server API can read the same Postgres database through `SUPABASE_DB_URL`.
+- Frontend lint, typecheck, dashboard API limit checks, public API error-response checks, server DB config checks, and production build succeed; the build includes `/api/dashboard` and `/api/health`.
+- Frontend server API can read the same Postgres database through `SUPABASE_DB_URL`; the server-side Postgres client uses SSL plus explicit connection/query/statement timeouts.
 - Vercel env template and preflight checker exist for `SUPABASE_DB_URL` without printing secrets.
 - Tracked-file secret scan is part of local preflight and CI wiring.
 - Local smoke test against the dashboard API has returned real data.
 - Linux worker install, restart, health, log, and bootstrap scripts exist.
-- Linux worker server-side preflight script exists for read-only diagnostics before/after install.
+- Linux worker server-side preflight script exists for read-only diagnostics before/after install, accepts either `SUPABASE_DB_URL` or `DATABASE_URL`, and handles UTF-8 BOM env files.
 - Windows helper scripts exist for Linux worker deploy, Vercel deploy, readiness checks, smoke tests, and local preflight.
 - Readiness checks support strict production gating with explicit skips for known external constraints.
 - Final deployment orchestrator exists for local preflight, readiness, worker deploy, and frontend smoke testing once external targets are known.
-- Linux worker deploy dry-run is covered by local verification and is wired into GitHub Actions, including first-server bootstrap before clone.
+- Linux worker deploy dry-run and upload-env dry-run are covered by local verification and wired into GitHub Actions, including first-server bootstrap before clone and safe temp-file env upload before installing `/opt/DETECT/.env`.
 - Backend unit tests cover Bankr launch parsing, X identity resolution priority/fallbacks, GitHub URL discovery/scoring/API aggregation, X cursor pagination, tweet dedupe, author filtering, 50-post defaults, configured target persistence, OpenAI analysis fallback behavior, and redacted environment diagnostics including X pagination env reporting.
 - Frontend API limit checks cover `/api/dashboard?limit=` bounds for invalid, negative, decimal, default, and oversized values.
+- Frontend API error checks ensure public `/api/dashboard` and `/api/health` responses do not expose internal exception messages.
+- CI manual checkout is locally probed through HTTPS fetch of `refs/heads/main` and SHA comparison against the current local HEAD.
 - Real `.env` remains ignored and is not committed.
 
 ## Current External Blockers
