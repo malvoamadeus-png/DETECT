@@ -76,7 +76,53 @@ function Test-GitHubActions {
     $ok = $run.status -eq "completed" -and $run.conclusion -eq "success"
     Write-Check "github_actions" $ok "status=$($run.status) conclusion=$($run.conclusion) url=$($run.html_url)"
   } catch {
-    Write-Host "github_actions=skipped $($_.Exception.Message)"
+    $fallback = Test-GitHubActionsViaStatusScript -Repo $Repo -ExpectedSha $ExpectedSha -PrimaryError $_.Exception.Message
+    if (-not $fallback) {
+      Write-Check "github_actions" $false "api failed and fallback unavailable: $($_.Exception.Message)"
+    }
+  }
+}
+
+function Test-GitHubActionsViaStatusScript {
+  param(
+    [string]$Repo,
+    [string]$ExpectedSha,
+    [string]$PrimaryError
+  )
+  $scriptPath = Join-Path $root "scripts/trigger-ci.ps1"
+  if (-not (Test-Path -LiteralPath $scriptPath)) {
+    return $false
+  }
+  try {
+    $output = powershell.exe -NoProfile -ExecutionPolicy Bypass -File $scriptPath -Repo $Repo -StatusOnly 2>&1
+    if ($LASTEXITCODE -ne 0) {
+      return $false
+    }
+    $text = ($output -join "`n")
+    if ($text -match "head_run=found status=([^\s]+) conclusion=([^\s]+) url=([^\r\n]+)") {
+      $status = $matches[1]
+      $conclusion = $matches[2]
+      $url = $matches[3].Trim()
+      $shaLine = [regex]::Match($text, "branch=.* head=([0-9a-f]{40})")
+      if ($shaLine.Success -and $shaLine.Groups[1].Value -ne $ExpectedSha) {
+        Write-Check "github_actions" $false "fallback head mismatch expected=$ExpectedSha actual=$($shaLine.Groups[1].Value) primary_error=$PrimaryError"
+        return $true
+      }
+      $ok = $status -eq "completed" -and $conclusion -eq "success"
+      Write-Check "github_actions" $ok "source=trigger-ci status=$status conclusion=$conclusion url=$url primary_error=$PrimaryError"
+      return $true
+    }
+    if ($text -match "head_run=missing") {
+      Write-Check "github_actions" $false "source=trigger-ci no run found for $ExpectedSha primary_error=$PrimaryError"
+      return $true
+    }
+    if ($text -match "ci_status=rate_limited") {
+      Write-Check "github_actions" $false "source=trigger-ci rate_limited primary_error=$PrimaryError"
+      return $true
+    }
+    return $false
+  } catch {
+    return $false
   }
 }
 
