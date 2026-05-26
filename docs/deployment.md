@@ -152,7 +152,7 @@ cd D:\Coding\DETECT
 .\scripts\deploy-linux.ps1 -HostName user@host
 ```
 
-By default this first bootstraps minimal packages before cloning the repo, then runs `scripts/linux/bootstrap-server.sh` after checkout. The bootstrap may use `sudo` to install `git`, `python3`, `python3-venv`, `python3-pip`, and CA certificates. Use `-SkipBootstrap` if the server is already prepared.
+By default this first bootstraps minimal packages before cloning the repo, then runs `scripts/linux/bootstrap-server.sh` after checkout. The bootstrap may use `sudo` to install `git`, `python3`, `python3-venv`, `python3-pip`, and CA certificates, and it verifies that both `python3 -m venv` and `python3 -m pip` work before continuing. Use `-SkipBootstrap` if the server is already prepared.
 
 Preview the generated remote commands before connecting:
 

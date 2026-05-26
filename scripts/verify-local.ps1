@@ -54,6 +54,8 @@ DATABASE_URL=postgres://user.projref@host.example/db
   $requiredDeployFragments = @(
     "git clone",
     "git pull --ff-only origin main",
+    "python3 -m venv --help",
+    "python3 -m pip --version",
     "bash scripts/linux/install-worker.sh",
     "bash scripts/linux/healthcheck-worker.sh"
   )

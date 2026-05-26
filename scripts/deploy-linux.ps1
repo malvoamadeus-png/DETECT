@@ -35,7 +35,7 @@ sudo chown "`$(id -u):`$(id -g)" '$AppDir'
 function Get-RemoteDependencyBootstrapScript {
   @"
 set -euo pipefail
-if command -v git >/dev/null 2>&1 && command -v python3 >/dev/null 2>&1; then
+if command -v git >/dev/null 2>&1 && command -v python3 >/dev/null 2>&1 && python3 -m venv --help >/dev/null 2>&1 && python3 -m pip --version >/dev/null 2>&1; then
   echo "Remote dependencies already installed."
 elif command -v apt-get >/dev/null 2>&1; then
   sudo apt-get update

@@ -15,3 +15,5 @@ fi
 
 git --version
 python3 --version
+python3 -m venv --help >/dev/null
+python3 -m pip --version
