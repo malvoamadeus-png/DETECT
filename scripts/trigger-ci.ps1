@@ -74,10 +74,19 @@ function Show-CIStatus {
   $runsUri = "https://api.github.com/repos/$Repo/actions/workflows/$Workflow/runs?branch=$Ref&per_page=10"
 
   $repoPayload = Invoke-GitHubPublic -Uri $repoUri
+  if (-not $repoPayload) {
+    return
+  }
   $workflowPayload = Invoke-GitHubPublic -Uri $workflowUri
+  if (-not $workflowPayload) {
+    return
+  }
   $branchPayload = Invoke-GitHubPublic -Uri $branchUri
+  if (-not $branchPayload) {
+    return
+  }
   $runsPayload = Invoke-GitHubPublic -Uri $runsUri
-  if (-not $repoPayload -or -not $workflowPayload -or -not $branchPayload -or -not $runsPayload) {
+  if (-not $runsPayload) {
     return
   }
   $headSha = [string]$branchPayload.commit.sha

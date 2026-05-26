@@ -54,7 +54,8 @@ try {
   $requiredTriggerFragments = @(
     "function Get-OptionalGitHubToken",
     "ci_status=rate_limited",
-    "set GITHUB_TOKEN or GH_TOKEN"
+    "set GITHUB_TOKEN or GH_TOKEN",
+    "if (-not `$repoPayload)"
   )
   foreach ($fragment in $requiredTriggerFragments) {
     if ($triggerScript -notlike "*$fragment*") {
